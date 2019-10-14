@@ -16,7 +16,7 @@ class App {
 
   private routes (): void {
     this.express.get('/', (_, res) => {
-      return res.json({ gretting: 'Welcome to Conehead API' })
+      return res.json({ gretting: 'Welcome to Conehead API 🧙🏼‍♂️' })
     })
   }
 }
