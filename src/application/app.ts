@@ -3,6 +3,7 @@ import cors from 'cors'
 
 class App {
   public express: express.Application
+
   public constructor () {
     this.express = express()
     this.middlewares()
