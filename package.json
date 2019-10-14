@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "NODE_ENV=development nodemon src/server.ts",
-    "build": "sucrase ./src -d ./dist --transforms typescript,imports && node ./dist/server.js"
+    "build": "sucrase ./src -d ./dist --transforms typescript,imports",
+    "start": "node ./dist/server.js"
   },
   "devDependencies": {
     "@types/express": "^4.17.1",
