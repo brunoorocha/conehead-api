@@ -2,4 +2,4 @@
 
 const port = process.env.PORT || 3333
 _app2.default.listen(port)
-console.log('Conehead API is ready!')
+console.log(`Conehead API is ready and listen on port ${port}!`)
