@@ -1,16 +1,12 @@
 import { ProductStoreContract } from '../ProductStoreContract'
-import { Product as MongoProduct } from './ProductScheme'
+import { MongoProduct } from './ProductScheme'
+import MongoProductToProductAdapter from './MongoProductToProductAdapter'
 import Product from '../../../../models/Product'
 
 class MongoProductStore implements ProductStoreContract {
   public async fetchAll (): Promise<Product[]> {
     const mongoProducts = await MongoProduct.find()
-    const products = mongoProducts.map(mongoProduct => {
-      const product = new Product()
-      product.name = mongoProduct.name
-      return product
-    })
-
+    const products = mongoProducts.map(mongoProduct => MongoProductToProductAdapter.make(mongoProduct))
     return products
   }
 
@@ -19,9 +15,7 @@ class MongoProductStore implements ProductStoreContract {
       name: name
     })
 
-    const product = new Product()
-    product.name = mongoProduct.name
-    return product
+    return MongoProductToProductAdapter.make(mongoProduct)
   }
 }
 

@@ -10,4 +10,4 @@ const ProductSchema = new Schema({
   timestamps: true
 })
 
-export const Product: Model<ProductSchemaInterface> = model<ProductSchemaInterface>('Product', ProductSchema)
+export const MongoProduct: Model<ProductSchemaInterface> = model<ProductSchemaInterface>('Product', ProductSchema)
