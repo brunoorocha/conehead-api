@@ -17,6 +17,11 @@ class MongoProductStore implements ProductStore {
 
     return MongoProductToProductAdapter.make(mongoProduct)
   }
+
+  public async get (productId: string): Promise<Product> {
+    const mongoProduct = await MongoProduct.findById(productId)
+    return MongoProductToProductAdapter.make(mongoProduct)
+  }
 }
 
 export default MongoProductStore
