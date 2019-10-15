@@ -1,6 +1,6 @@
 import Product from '../../../models/Product'
 
-export interface ProductStore {
+export default interface ProductStore {
   /**
    * @returns An array with all products in this store
    */
@@ -9,5 +9,5 @@ export interface ProductStore {
   /**
    * @param name The name of the product that will be created
    */
-  save (name: string): Promise<Product>;
+  save (product: Product): Promise<Product>;
 }

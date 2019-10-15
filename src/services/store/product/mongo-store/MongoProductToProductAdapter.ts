@@ -8,9 +8,10 @@ class MongoProductToProductAdapter {
    * @param mongoProduct The object of type MongoProductInterface to be adapted
    */
   public static make (mongoProduct: MoongoProductInterface): Product {
-    const product = new Product()
-    product.id = mongoProduct._id
-    product.name = mongoProduct.name
+    const product = new Product(
+      mongoProduct._id,
+      mongoProduct.name
+    )
     return product
   }
 }

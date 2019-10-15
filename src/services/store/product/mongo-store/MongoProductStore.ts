@@ -1,4 +1,4 @@
-import { ProductStore } from '../ProductStore'
+import ProductStore from '../ProductStore'
 import { MongoProduct } from './ProductScheme'
 import MongoProductToProductAdapter from './MongoProductToProductAdapter'
 import Product from '../../../../models/Product'
@@ -10,9 +10,9 @@ class MongoProductStore implements ProductStore {
     return products
   }
 
-  public async save (name: string): Promise<Product> {
+  public async save (product: Product): Promise<Product> {
     const mongoProduct = await MongoProduct.create({
-      name: name
+      name: product.name
     })
 
     return MongoProductToProductAdapter.make(mongoProduct)
