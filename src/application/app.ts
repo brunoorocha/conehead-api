@@ -1,7 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import mongoose from 'mongoose'
-import ProductController from '../controllers/ProductController'
+import router from '../routes'
 
 class App {
   public express: express.Application
@@ -19,12 +19,7 @@ class App {
   }
 
   private routes (): void {
-    this.express.get('/', (_, res) => {
-      return res.json({ gretting: 'Welcome to Conehead API 🧙🏼‍♂️' })
-    })
-
-    this.express.get('/products', ProductController.index)
-    this.express.post('/products', ProductController.store)
+    this.express.use('/api/v1', router)
   }
 
   private database (): void {

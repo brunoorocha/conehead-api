@@ -19,7 +19,7 @@ class ProductController {
    * @param { Response } res An object of Express.Response type
    * @returns { Promise<Response> } Returns the created product in json format through Reques.json() method
    */
-  public async store (req: Request, res: Response): Promise<Response> {
+  public store = async (req: Request, res: Response): Promise<Response> => {
     const name: string = req.body.name
     const product = await this.productStore.save(name)
     return res.json(product)
@@ -31,7 +31,7 @@ class ProductController {
    * @param { Response } res An object of Express.Response type
    * @returns { Promise<Response> }
    */
-  public async index (req: Request, res: Response): Promise<Response> {
+  public index = async (req: Request, res: Response): Promise<Response> => {
     const products = await this.productStore.fetchAll()
     return res.json(products)
   }
