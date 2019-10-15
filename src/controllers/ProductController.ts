@@ -1,7 +1,8 @@
 import { Request, Response } from 'express'
 import MongoProductStore from '../services/store/product/mongo-store/MongoProductStore'
 import ProductStore from '../services/store/product/ProductStore'
-import CreateProductWorker from '../workers/create-product'
+import CreateProductWorker from '../workers/product/create-product'
+import ListProductsWorker from '../workers/product/list-products'
 
 class ProductController {
   public productStore: ProductStore
@@ -32,8 +33,8 @@ class ProductController {
    * @param { Response } res An object of Express.Response type
    * @returns { Promise<Response> }
    */
-  public index = async (req: Request, res: Response): Promise<Response> => {
-    const products = await this.productStore.fetchAll()
+  public index = async (_: Request, res: Response): Promise<Response> => {
+    const products = await ListProductsWorker(this.productStore)
     return res.json(products)
   }
 }
