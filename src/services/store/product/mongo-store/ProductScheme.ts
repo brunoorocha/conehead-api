@@ -1,6 +1,6 @@
 import { Document, Schema, Model, model } from 'mongoose'
 
-export interface ProductSchemaInterface extends Document {
+export interface MoongoProductInterface extends Document {
   name: string;
 }
 
@@ -10,4 +10,4 @@ const ProductSchema = new Schema({
   timestamps: true
 })
 
-export const MongoProduct: Model<ProductSchemaInterface> = model<ProductSchemaInterface>('Product', ProductSchema)
+export const MongoProduct: Model<MoongoProductInterface> = model<MoongoProductInterface>('Product', ProductSchema)
