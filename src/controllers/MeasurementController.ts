@@ -4,6 +4,7 @@ import MongoMeasurementStore from '../services/store/measurement/mongo-store/Mon
 import CreateMeasurement from '../workers/measurement/CreateMeasurement'
 import ListMeasurements from '../workers/measurement/ListMeasurements'
 import GetMeasurementWithId from '../workers/measurement/GetMeasurementWithId'
+import RemoveMeasurementWithId from '../workers/measurement/RemoveMeasurementWithId'
 import { Request, Response } from 'express'
 
 class MeasurementController {
@@ -29,6 +30,12 @@ class MeasurementController {
     const measurementId: string = req.params.measurementId
     const measurement = await GetMeasurementWithId(measurementId, this.measurementStore)
     return res.json(measurement)
+  }
+
+  public remove = async (req: Request, res: Response): Promise<Response> => {
+    const measurementId: string = req.params.measurementId
+    const removedMeasurement = await RemoveMeasurementWithId(measurementId, this.measurementStore)
+    return res.json(removedMeasurement)
   }
 }
 
