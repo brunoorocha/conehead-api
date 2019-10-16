@@ -3,6 +3,7 @@ import Measurement from '../models/Measurement'
 import MongoMeasurementStore from '../services/store/measurement/mongo-store/MongoMeasurementStore'
 import CreateMeasurement from '../workers/measurement/CreateMeasurement'
 import ListMeasurements from '../workers/measurement/ListMeasurements'
+import GetMeasurementWithId from '../workers/measurement/GetMeasurementWithId'
 import { Request, Response } from 'express'
 
 class MeasurementController {
@@ -22,6 +23,12 @@ class MeasurementController {
   public index = async (req: Request, res: Response): Promise<Response> => {
     const measurements = await ListMeasurements(this.measurementStore)
     return res.json(measurements)
+  }
+
+  public get = async (req: Request, res: Response): Promise<Response> => {
+    const measurementId: string = req.params.measurementId
+    const measurement = await GetMeasurementWithId(measurementId, this.measurementStore)
+    return res.json(measurement)
   }
 }
 
