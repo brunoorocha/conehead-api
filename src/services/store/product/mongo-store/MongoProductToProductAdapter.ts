@@ -1,4 +1,4 @@
-import { MoongoProductInterface } from './ProductScheme'
+import { MongoProductInterface } from './MongoProductSchema'
 import Product from '../../../../models/Product'
 
 class MongoProductToProductAdapter {
@@ -7,7 +7,7 @@ class MongoProductToProductAdapter {
    * in an Product object.
    * @param mongoProduct The object of type MongoProductInterface to be adapted
    */
-  public static make (mongoProduct: MoongoProductInterface): Product {
+  public static make (mongoProduct: MongoProductInterface): Product {
     const product = new Product(
       mongoProduct._id,
       mongoProduct.name,

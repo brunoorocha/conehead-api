@@ -1,9 +1,9 @@
-import ProductStore from '../ProductStore'
-import { MongoProduct } from './ProductScheme'
+import Store from '../../Store'
+import { MongoProduct } from './MongoProductSchema'
 import MongoProductToProductAdapter from './MongoProductToProductAdapter'
 import Product from '../../../../models/Product'
 
-class MongoProductStore implements ProductStore {
+class MongoProductStore implements Store<Product> {
   public async fetchAll (): Promise<Product[]> {
     const mongoProducts = await MongoProduct.find()
     const products = mongoProducts.map(mongoProduct => MongoProductToProductAdapter.make(mongoProduct))

@@ -1,18 +1,19 @@
 import { Request, Response } from 'express'
 import MongoProductStore from '../services/store/product/mongo-store/MongoProductStore'
-import ProductStore from '../services/store/product/ProductStore'
+import Store from '../services/store/Store'
 import CreateProductWorker from '../workers/product/CreateProduct'
 import ListProductsWorker from '../workers/product/ListProducts'
 import GetProductWithId from '../workers/product/GetProductWithId'
 import RemoveProductWithId from '../workers/product/RemoveProductWithId'
+import Product from '../models/Product'
 
 class ProductController {
-  public productStore: ProductStore
+  public productStore: Store<Product>
 
   /**
    * @param productStore Dependency injection of an implementation of ProductStore interface. It can be ommited because is used an MongoProductStore object for default.
    */
-  public constructor (productStore: ProductStore = new MongoProductStore()) {
+  public constructor (productStore: Store<Product> = new MongoProductStore()) {
     this.productStore = productStore
   }
 
@@ -26,7 +27,7 @@ class ProductController {
   public store = async (req: Request, res: Response): Promise<Response> => {
     const name: string = req.body.name
     const barcode: string = req.body.barcode
-    const product = await CreateProductWorker(this.productStore, name, barcode)
+    const product = await CreateProductWorker(name, barcode, this.productStore)
     return res.json(product)
   }
 
