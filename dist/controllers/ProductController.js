@@ -6,6 +6,7 @@ var _ListProducts = require('../workers/product/ListProducts'); var _ListProduct
 var _GetProductWithId = require('../workers/product/GetProductWithId'); var _GetProductWithId2 = _interopRequireDefault(_GetProductWithId);
 var _RemoveProductWithId = require('../workers/product/RemoveProductWithId'); var _RemoveProductWithId2 = _interopRequireDefault(_RemoveProductWithId);
 
+
 class ProductController {
   
 
@@ -25,8 +26,9 @@ class ProductController {
    */
    __init() {this.store = async (req, res) => {
     const name = req.body.name
-    console.log(name)
-    const product = await _CreateProduct2.default.call(void 0, name, this.productStore)
+    const barcode = req.body.barcode
+    const measurementId = req.body.measurementId
+    const product = await _CreateProduct2.default.call(void 0, name, measurementId, barcode, this.productStore)
     return res.json(product)
   }}
 
@@ -36,16 +38,16 @@ class ProductController {
    * @param res An object of Express.Response type.
    * @returns Returns the list of products in json format through Reques.json() method.
    */
-   __init2() {this.index = async (_, res) => {
+   __init2() {this.index = async (_req, res) => {
     const products = await _ListProducts2.default.call(void 0, this.productStore)
     return res.json(products)
   }}
 
   /**
-   * This method remove a product from the product store used by ProductController.
+   * This method get a product with a given id from the product store used by ProductController.
    * @param req An object of Express.Request type.
    * @param res An object of Express.Response type.
-   * @returns Returns a product in json format through Reques.json() method.
+   * @returns Returns the product found in json format through Reques.json() method.
    */
    __init3() {this.get = async (req, res) => {
     const productId = req.params.productId
@@ -53,6 +55,12 @@ class ProductController {
     return res.json(product)
   }}
 
+  /**
+   * This method remove a product from the product store used by ProductController.
+   * @param req An object of Express.Request type.
+   * @param res An object of Express.Response type.
+   * @returns Returns the removed product in json format through Reques.json() method.
+   */
    __init4() {this.remove = async (req, res) => {
     const productId = req.params.productId
     const removedProduct = await _RemoveProductWithId2.default.call(void 0, productId, this.productStore)
