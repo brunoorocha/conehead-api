@@ -11,6 +11,7 @@ class MongoProductToProductAdapter {
     const product = new Product(
       mongoProduct._id,
       mongoProduct.name,
+      mongoProduct.measurement,
       mongoProduct.barcode
     )
     return product

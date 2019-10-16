@@ -3,6 +3,7 @@ import { Document, Schema, Model, model } from 'mongoose'
 export interface MongoProductInterface extends Document {
   name: string;
   barcode?: string;
+  measurement: string;
 }
 
 const MongoProductSchema = new Schema({
@@ -13,6 +14,10 @@ const MongoProductSchema = new Schema({
   barcode: {
     type: String,
     required: false
+  },
+  measurement: {
+    type: Schema.Types.ObjectId,
+    ref: 'Measurement'
   }
 }, {
   timestamps: true

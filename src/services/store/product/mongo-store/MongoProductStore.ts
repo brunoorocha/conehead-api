@@ -13,7 +13,8 @@ class MongoProductStore implements Store<Product> {
   public async save (product: Product): Promise<Product> {
     const mongoProduct = await MongoProduct.create({
       name: product.name,
-      barcode: product.barcode
+      barcode: product.barcode,
+      measurement: product.measurementId
     })
 
     return MongoProductToProductAdapter.make(mongoProduct)

@@ -5,16 +5,21 @@ import CreateProductWorker from '../workers/product/CreateProduct'
 import ListProductsWorker from '../workers/product/ListProducts'
 import GetProductWithId from '../workers/product/GetProductWithId'
 import RemoveProductWithId from '../workers/product/RemoveProductWithId'
+import PopulateProductMeasurement from '../workers/product/PopulateProductMeasurement'
 import Product from '../models/Product'
+import Measurement from '../models/Measurement'
+import MongoMeasurementStore from '../services/store/measurement/mongo-store/MongoMeasurementStore'
 
 class ProductController {
   public productStore: Store<Product>
+  public measurementStore: Store<Measurement>
 
   /**
    * @param productStore Dependency injection of an implementation of ProductStore interface. It can be ommited because is used an MongoProductStore object for default.
    */
-  public constructor (productStore: Store<Product> = new MongoProductStore()) {
+  public constructor (productStore: Store<Product> = new MongoProductStore(), measurementStore: Store<Measurement> = new MongoMeasurementStore()) {
     this.productStore = productStore
+    this.measurementStore = measurementStore
   }
 
   /**
@@ -27,7 +32,8 @@ class ProductController {
   public store = async (req: Request, res: Response): Promise<Response> => {
     const name: string = req.body.name
     const barcode: string = req.body.barcode
-    const product = await CreateProductWorker(name, barcode, this.productStore)
+    const measurementId: string = req.body.measurementId
+    const product = await CreateProductWorker(name, measurementId, barcode, this.productStore)
     return res.json(product)
   }
 
@@ -51,7 +57,8 @@ class ProductController {
   public get = async (req: Request, res: Response): Promise<Response> => {
     const productId: string = req.params.productId
     const product = await GetProductWithId(productId, this.productStore)
-    return res.json(product)
+    const populatedProduct = await PopulateProductMeasurement(product, this.measurementStore)
+    return res.json(populatedProduct)
   }
 
   /**
