@@ -37,7 +37,7 @@ class ProductController {
    * @param res An object of Express.Response type.
    * @returns Returns the list of products in json format through Reques.json() method.
    */
-  public index = async (_: Request, res: Response): Promise<Response> => {
+  public index = async (_req: Request, res: Response): Promise<Response> => {
     const products = await ListProductsWorker(this.productStore)
     return res.json(products)
   }

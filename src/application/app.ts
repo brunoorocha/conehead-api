@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from 'cors'
+import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
 import router from '../routes'
 
@@ -15,11 +16,12 @@ class App {
 
   private middlewares (): void {
     this.express.use(express.json())
+    this.express.use(bodyParser.urlencoded({ extended: true }))
     this.express.use(cors())
   }
 
   private routes (): void {
-    this.express.use('/api/v1', router)
+    this.express.use(router)
   }
 
   private database (): void {
