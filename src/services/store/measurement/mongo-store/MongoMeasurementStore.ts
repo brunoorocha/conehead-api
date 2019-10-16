@@ -12,7 +12,8 @@ class MongoMeasurementStore implements Store<Measurement> {
 
   public async save (measurement: Measurement): Promise<Measurement> {
     const mongoMeasurement = await MongoMeasurement.create({
-      name: measurement.name
+      name: measurement.name,
+      abbreviation: measurement.abbreviation
     })
 
     return MongoMeasurementToMeasurementAdapter.make(mongoMeasurement)

@@ -5,7 +5,8 @@ class MongoMeasurementToMeasurementAdapter {
   public static make (mongoMeasurement: MongoMeasurementInterface): Measurement {
     const measurement = new Measurement(
       mongoMeasurement._id,
-      mongoMeasurement.name
+      mongoMeasurement.name,
+      mongoMeasurement.abbreviation
     )
 
     return measurement

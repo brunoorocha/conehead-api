@@ -14,7 +14,8 @@ class MeasurementController {
 
   public store = async (req: Request, res: Response): Promise<Response> => {
     const name: string = req.body.name
-    const measurement = await CreateMeasurement(name, this.measurementStore)
+    const abbreviation: string = req.body.abbreviation
+    const measurement = await CreateMeasurement(name, abbreviation, this.measurementStore)
     return res.json(measurement)
   }
 
