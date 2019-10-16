@@ -10,7 +10,8 @@ class MongoProductToProductAdapter {
   public static make (mongoProduct: MoongoProductInterface): Product {
     const product = new Product(
       mongoProduct._id,
-      mongoProduct.name
+      mongoProduct.name,
+      mongoProduct.barcode
     )
     return product
   }

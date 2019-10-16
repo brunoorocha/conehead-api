@@ -10,13 +10,28 @@ class MongoProductStore  {
     return products
   }
 
-   async save (name) {
+   async save (product) {
     const mongoProduct = await _ProductScheme.MongoProduct.create({
-      name: name
+      name: product.name
     })
 
     return _MongoProductToProductAdapter2.default.make(mongoProduct)
   }
+
+   async get (productId) {
+    const mongoProduct = await _ProductScheme.MongoProduct.findById(productId)
+    return _MongoProductToProductAdapter2.default.make(mongoProduct)
+  }
+
+   async remove (productId) {
+    const mongoProduct = await _ProductScheme.MongoProduct.findById(productId)
+    _ProductScheme.MongoProduct.deleteOne({ _id: productId }, (error) => {
+      if (error) {
+        console.log(error)
+      }
+    })
+    return _MongoProductToProductAdapter2.default.make(mongoProduct)
+  }
 }
 
-exports. default = new MongoProductStore()
+exports. default = MongoProductStore

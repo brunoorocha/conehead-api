@@ -6,8 +6,8 @@ import Product from '../../models/Product'
  * @param productStore An implementation of ProductStore interface used to store the created product.
  * @returns A Promise with the stored product.
  */
-const createProductWorker = async (name: string, productStore: ProductStore): Promise<Product> => {
-  const product = new Product(null, name)
+const createProductWorker = async (productStore: ProductStore, name: string, barcode?: string): Promise<Product> => {
+  const product = new Product(null, name, barcode)
   const storedProduct = await productStore.save(product)
   return storedProduct
 }

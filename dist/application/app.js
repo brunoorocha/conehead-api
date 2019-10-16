@@ -1,7 +1,7 @@
 "use strict"; function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }Object.defineProperty(exports, "__esModule", {value: true});var _express = require('express'); var _express2 = _interopRequireDefault(_express);
 var _cors = require('cors'); var _cors2 = _interopRequireDefault(_cors);
 var _mongoose = require('mongoose'); var _mongoose2 = _interopRequireDefault(_mongoose);
-var _ProductController = require('../controllers/ProductController'); var _ProductController2 = _interopRequireDefault(_ProductController);
+var _routes = require('../routes'); var _routes2 = _interopRequireDefault(_routes);
 
 class App {
   
@@ -19,12 +19,7 @@ class App {
   }
 
    routes () {
-    this.express.get('/', (_, res) => {
-      return res.json({ gretting: 'Welcome to Conehead API 🧙🏼‍♂️' })
-    })
-
-    this.express.get('/products', _ProductController2.default.index)
-    this.express.post('/products', _ProductController2.default.store)
+    this.express.use('/api/v1', _routes2.default)
   }
 
    database () {

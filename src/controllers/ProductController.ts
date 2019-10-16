@@ -25,8 +25,8 @@ class ProductController {
    */
   public store = async (req: Request, res: Response): Promise<Response> => {
     const name: string = req.body.name
-    console.log(name)
-    const product = await CreateProductWorker(name, this.productStore)
+    const barcode: string = req.body.barcode
+    const product = await CreateProductWorker(this.productStore, name, barcode)
     return res.json(product)
   }
 
@@ -42,10 +42,10 @@ class ProductController {
   }
 
   /**
-   * This method remove a product from the product store used by ProductController.
+   * This method get a product with a given id from the product store used by ProductController.
    * @param req An object of Express.Request type.
    * @param res An object of Express.Response type.
-   * @returns Returns a product in json format through Reques.json() method.
+   * @returns Returns the product found in json format through Reques.json() method.
    */
   public get = async (req: Request, res: Response): Promise<Response> => {
     const productId: string = req.params.productId
@@ -53,6 +53,12 @@ class ProductController {
     return res.json(product)
   }
 
+  /**
+   * This method remove a product from the product store used by ProductController.
+   * @param req An object of Express.Request type.
+   * @param res An object of Express.Response type.
+   * @returns Returns the removed product in json format through Reques.json() method.
+   */
   public remove = async (req: Request, res: Response): Promise<Response> => {
     const productId: string = req.params.productId
     const removedProduct = await RemoveProductWithId(productId, this.productStore)
