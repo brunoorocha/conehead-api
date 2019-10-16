@@ -1,9 +1,10 @@
 import { Document, Schema, Model, model } from 'mongoose'
+import { MongoMeasurementInterface } from '../../measurement/mongo-store/MongoMeasurementSchema'
 
 export interface MongoProductInterface extends Document {
   name: string;
   barcode?: string;
-  measurement: string;
+  measurement: string | MongoMeasurementInterface;
 }
 
 const MongoProductSchema = new Schema({
