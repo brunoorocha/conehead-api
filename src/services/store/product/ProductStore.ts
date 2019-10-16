@@ -15,4 +15,9 @@ export default interface ProductStore {
    * @param productId The id of product that you want.
    */
   get (productId: string): Promise<Product>;
+
+  /**
+   * @param product The id of product that you want to remove.
+   */
+  remove (productId: string): Promise<Product>;
 }

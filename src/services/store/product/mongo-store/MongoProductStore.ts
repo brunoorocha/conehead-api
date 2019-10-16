@@ -22,6 +22,16 @@ class MongoProductStore implements ProductStore {
     const mongoProduct = await MongoProduct.findById(productId)
     return MongoProductToProductAdapter.make(mongoProduct)
   }
+
+  public async remove (productId: string): Promise<Product> {
+    const mongoProduct = await MongoProduct.findById(productId)
+    MongoProduct.deleteOne({ _id: productId }, (error) => {
+      if (error) {
+        console.log(error)
+      }
+    })
+    return MongoProductToProductAdapter.make(mongoProduct)
+  }
 }
 
 export default MongoProductStore

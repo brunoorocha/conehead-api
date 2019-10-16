@@ -7,7 +7,7 @@ import Product from '../../models/Product'
  * @returns A Promise with the stored product.
  */
 const createProductWorker = async (name: string, productStore: ProductStore): Promise<Product> => {
-  const product = new Product(name)
+  const product = new Product(null, name)
   const storedProduct = await productStore.save(product)
   return storedProduct
 }
