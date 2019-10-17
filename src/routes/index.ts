@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import greetingRoutes from './greeting/GreetingRoutes'
 import productRoutes from './product/ProductRoutes'
+import productItemRoutes from './product-item/ProductItemRoutes'
 import measurementRoutes from './measurement/MeasurementRoutes'
 
 class AppRouter {
@@ -18,6 +19,7 @@ class AppRouter {
   private initRoutes (): void {
     this.routes.push(greetingRoutes)
     this.routes.push(productRoutes)
+    this.routes.push(productItemRoutes)
     this.routes.push(measurementRoutes)
   }
 }
