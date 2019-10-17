@@ -29,7 +29,7 @@ class MongoProductItemStore implements ProductItemStore {
 
   public async get (productItemId: string): Promise<ProductItem> {
     const mongoProductItem = await MongoProductItem.findById(productItemId)
-    mongoProductItem.populate('product').execPopulate()
+    await mongoProductItem.populate('product').execPopulate()
     return MongoProductItemToProductItemAdapter.make(mongoProductItem)
   }
 
