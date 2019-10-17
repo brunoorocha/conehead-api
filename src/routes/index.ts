@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import greetingRoutes from './greeting/greetingRoutes'
+import greetingRoutes from './greeting/GreetingRoutes'
 import productRoutes from './product/ProductRoutes'
 import productItemRoutes from './product-item/ProductItemRoutes'
 import measurementRoutes from './measurement/MeasurementRoutes'

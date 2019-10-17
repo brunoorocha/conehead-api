@@ -25,7 +25,7 @@ class App {
   }
 
    database () {
-    _mongoose2.default.connect('mongodb://conehead:mtyrG99i8%409!pUd@ds235378.mlab.com:35378/heroku_vjwbmw5s', {
+    _mongoose2.default.connect('mongodb://conehead:mtyrG99i8%409!pUd@ds335668.mlab.com:35668/heroku_99nr7r2h', {
       useNewUrlParser: true,
       useUnifiedTopology: true
     }).catch(error => {
