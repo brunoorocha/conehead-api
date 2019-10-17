@@ -4,7 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "NODE_ENV=development nodemon src/server.ts"
+    "dev": "NODE_ENV=development nodemon src/server.ts",
+    "build": "rm -rf ./dist && sucrase ./src -d ./dist --transforms typescript,imports",
+    "start": "node ./dist/server.js"
   },
   "devDependencies": {
     "@types/cors": "^2.8.6",

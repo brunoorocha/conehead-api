@@ -1,1 +1,1 @@
-web: rm -rf ./dist && sucrase ./src -d ./dist --transforms typescript,imports && node ./dist/server.js
+web: yarn start
