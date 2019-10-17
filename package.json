@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "NODE_ENV=development nodemon src/server.ts",
     "build": "rm -rf ./dist && sucrase ./src -d ./dist --transforms typescript,imports",
-    "start": "sucrase-node src/server.ts"
+    "start": "node ./dist/server.js"
   },
   "devDependencies": {
     "@types/cors": "^2.8.6",
