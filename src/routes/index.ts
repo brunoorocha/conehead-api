@@ -3,6 +3,7 @@ import greetingRoutes from './greeting/greetingRoutes'
 import productRoutes from './product/productRoutes'
 import productItemRoutes from './product-item/ProductItemRoutes'
 import measurementRoutes from './measurement/MeasurementRoutes'
+import notificationRoutes from './notifications/NotificationRoutes'
 
 class AppRouter {
   public routes: Router[] = []
@@ -21,6 +22,7 @@ class AppRouter {
     this.routes.push(productRoutes)
     this.routes.push(productItemRoutes)
     this.routes.push(measurementRoutes)
+    this.routes.push(notificationRoutes)
   }
 }
 
