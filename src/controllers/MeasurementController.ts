@@ -5,7 +5,7 @@ import CreateMeasurement from '../workers/measurement/CreateMeasurement'
 import ListMeasurements from '../workers/measurement/ListMeasurements'
 import GetMeasurementWithId from '../workers/measurement/GetMeasurementWithId'
 import RemoveMeasurementWithId from '../workers/measurement/RemoveMeasurementWithId'
-import RequestValidationCheckWorker, { ResponseError } from '../workers/requestValidationCheck'
+import RequestValidationCheckWorker, { ResponseError } from '../workers/RequestValidationCheck'
 import { Request, Response } from 'express'
 
 class MeasurementController {

@@ -4,7 +4,7 @@ import { Request, Response } from 'express'
 import CreateProductItemWorker from '../workers/product-item/CreateProductItem'
 import ListProductItemsOfProductWorker from '../workers/product-item/ListProductItemsOfProduct'
 import GetProductItemWithIdWorker from '../workers/product-item/GetProductItemWithId'
-import RequestValidationCheckWorker, { ResponseError } from '../workers/requestValidationCheck'
+import RequestValidationCheckWorker, { ResponseError } from '../workers/RequestValidationCheck'
 
 class ProductItemController {
   public productItemStore: ProductItemStore
