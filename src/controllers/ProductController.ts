@@ -6,7 +6,7 @@ import GetProductWithId from '../workers/product/GetProductWithId'
 import RemoveProductWithId from '../workers/product/RemoveProductWithId'
 import { Request, Response } from 'express'
 import Product from '../models/Product'
-import RequestValidationCheckWorker, { ResponseError } from '../workers/requestValidationCheck'
+import RequestValidationCheckWorker, { ResponseError } from '../workers/RequestValidationCheck'
 
 class ProductController {
   public productStore: Store<Product>
