@@ -1,10 +1,11 @@
-import { Request, Response } from 'express'
 import MongoProductStore from '../services/store/product/mongo-store/MongoProductStore'
 import Store from '../services/store/Store'
 import CreateProductWorker from '../workers/product/CreateProduct'
 import ListProductsWorker from '../workers/product/ListProducts'
 import GetProductWithId from '../workers/product/GetProductWithId'
 import RemoveProductWithId from '../workers/product/RemoveProductWithId'
+import { Request, Response } from 'express'
+import { validationResult } from 'express-validator'
 import Product from '../models/Product'
 
 class ProductController {
@@ -25,6 +26,11 @@ class ProductController {
    * @returns Returns the created product in json format through Reques.json() method.
    */
   public store = async (req: Request, res: Response): Promise<Response> => {
+    const validationErrors = validationResult(req)
+    if (!validationErrors.isEmpty()) {
+      return res.status(403).json({ errors: validationErrors.array() })
+    }
+
     const name: string = req.body.name
     const barcode: string = req.body.barcode
     const measurementId: string = req.body.measurementId
@@ -50,6 +56,11 @@ class ProductController {
    * @returns Returns the product found in json format through Reques.json() method.
    */
   public get = async (req: Request, res: Response): Promise<Response> => {
+    const validationErrors = validationResult(req)
+    if (!validationErrors.isEmpty()) {
+      return res.status(403).json({ errors: validationErrors.array() })
+    }
+
     const productId: string = req.params.productId
     const product = await GetProductWithId(productId, this.productStore)
     return res.json(product)
@@ -62,6 +73,11 @@ class ProductController {
    * @returns Returns the removed product in json format through Reques.json() method.
    */
   public remove = async (req: Request, res: Response): Promise<Response> => {
+    const validationErrors = validationResult(req)
+    if (!validationErrors.isEmpty()) {
+      return res.status(403).json({ errors: validationErrors.array() })
+    }
+
     const productId: string = req.params.productId
     const removedProduct = await RemoveProductWithId(productId, this.productStore)
     return res.json(removedProduct)
