@@ -5,8 +5,8 @@ import ListProductsWorker from '../workers/product/ListProducts'
 import GetProductWithId from '../workers/product/GetProductWithId'
 import RemoveProductWithId from '../workers/product/RemoveProductWithId'
 import { Request, Response } from 'express'
-import { validationResult } from 'express-validator'
 import Product from '../models/Product'
+import RequestValidationCheckWorker, { ResponseError } from '../workers/requestValidationCheck'
 
 class ProductController {
   public productStore: Store<Product>
@@ -26,16 +26,20 @@ class ProductController {
    * @returns Returns the created product in json format through Reques.json() method.
    */
   public store = async (req: Request, res: Response): Promise<Response> => {
-    const validationErrors = validationResult(req)
-    if (!validationErrors.isEmpty()) {
-      return res.status(403).json({ errors: validationErrors.array() })
-    }
+    try {
+      await RequestValidationCheckWorker(req)
+      const name: string = req.body.name
+      const barcode: string = req.body.barcode
+      const measurementId: string = req.body.measurementId
+      const product = await CreateProductWorker(name, measurementId, barcode, this.productStore)
+      return res.json(product)
+    } catch (error) {
+      if ((error as ResponseError).status) {
+        return res.status(error.status).json({ errors: error.errors })
+      }
 
-    const name: string = req.body.name
-    const barcode: string = req.body.barcode
-    const measurementId: string = req.body.measurementId
-    const product = await CreateProductWorker(name, measurementId, barcode, this.productStore)
-    return res.json(product)
+      return res.status(500).json({ error })
+    }
   }
 
   /**
@@ -56,14 +60,18 @@ class ProductController {
    * @returns Returns the product found in json format through Reques.json() method.
    */
   public get = async (req: Request, res: Response): Promise<Response> => {
-    const validationErrors = validationResult(req)
-    if (!validationErrors.isEmpty()) {
-      return res.status(403).json({ errors: validationErrors.array() })
-    }
+    try {
+      await RequestValidationCheckWorker(req)
+      const productId: string = req.params.productId
+      const product = await GetProductWithId(productId, this.productStore)
+      return res.json(product)
+    } catch (error) {
+      if ((error as ResponseError).status) {
+        return res.status(error.status).json({ errors: error.errors })
+      }
 
-    const productId: string = req.params.productId
-    const product = await GetProductWithId(productId, this.productStore)
-    return res.json(product)
+      return res.status(500).json({ error })
+    }
   }
 
   /**
@@ -73,14 +81,18 @@ class ProductController {
    * @returns Returns the removed product in json format through Reques.json() method.
    */
   public remove = async (req: Request, res: Response): Promise<Response> => {
-    const validationErrors = validationResult(req)
-    if (!validationErrors.isEmpty()) {
-      return res.status(403).json({ errors: validationErrors.array() })
-    }
+    try {
+      await RequestValidationCheckWorker(req)
+      const productId: string = req.params.productId
+      const removedProduct = await RemoveProductWithId(productId, this.productStore)
+      return res.json(removedProduct)
+    } catch (error) {
+      if ((error as ResponseError).status) {
+        return res.status(error.status).json({ errors: error.errors })
+      }
 
-    const productId: string = req.params.productId
-    const removedProduct = await RemoveProductWithId(productId, this.productStore)
-    return res.json(removedProduct)
+      return res.status(500).json({ error })
+    }
   }
 }
 
