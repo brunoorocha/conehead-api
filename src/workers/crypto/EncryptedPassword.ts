@@ -1,7 +1,7 @@
 
 export default class EncryptedPassword {
-  private salt: string
-  private hash: string
+  readonly salt: string
+  readonly hash: string
 
   public constructor (salt: string, hash: string) {
     this.salt = salt

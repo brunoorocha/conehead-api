@@ -3,7 +3,8 @@ import { Document, Schema, Model, model } from 'mongoose'
 export interface MongoUserInterface extends Document {
   name: string;
   email: string;
-  password: string;
+  hash: string;
+  salt: string;
 }
 
 const MongoUserSchema = new Schema({
@@ -15,7 +16,11 @@ const MongoUserSchema = new Schema({
     type: String,
     required: true
   },
-  password: {
+  hash: {
+    type: String,
+    required: true
+  },
+  salt: {
     type: String,
     required: true
   }

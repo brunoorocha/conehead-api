@@ -2,23 +2,31 @@ import Store from '../../Store'
 import User from '../../../../models/User'
 import { MongoUser } from './MongoUserSchema'
 import MongoUserToUserAdapter from './MongoUserToUserAdapter'
+import { encryptPassword } from '../../../../workers/crypto/EncryptPassword'
 
 class MongoUserStore implements Store<User> {
   public async fetchAll (): Promise<User[]> {
     const mongoUsers = await MongoUser.find()
     const users = mongoUsers.map(mongoUser => MongoUserToUserAdapter.make(mongoUser))
-    return Promise.all(users)
+    return users
   }
 
-  public async save (user: User): Promise<User> {
+  public save = async (user: User): Promise<User> => {
+    const userWithEmailAlreadyExists = await this.findByEmail(user.email)
+    if (userWithEmailAlreadyExists) {
+      return Promise.reject(new Error(`Already exists a user using email ${user.email}`))
+    }
+
+    const encryptedPassword = encryptPassword(user.password)
     const mongoUser = await MongoUser.create({
       name: user.name,
       email: user.email,
-      password: user.password
+      hash: encryptedPassword.hash,
+      salt: encryptedPassword.salt
     })
 
-    const createdUser = await MongoUserToUserAdapter.make(mongoUser)
-    return createdUser
+    const createdUser = MongoUserToUserAdapter.make(mongoUser)
+    return Promise.resolve(createdUser)
   }
 
   public get = async (userId: string): Promise<User> => {
@@ -27,7 +35,7 @@ class MongoUserStore implements Store<User> {
       return Promise.reject(new Error(`There's no user with id ${userId}`))
     }
 
-    const user = await MongoUserToUserAdapter.make(mongoUser)
+    const user = MongoUserToUserAdapter.make(mongoUser)
     return user
   }
 
@@ -40,6 +48,14 @@ class MongoUserStore implements Store<User> {
     })
 
     return user
+  }
+
+  private async findByEmail (email: string): Promise<User> {
+    const mongoUser = await MongoUser.findOne({ email })
+    if (!mongoUser) { return null }
+
+    const user = MongoUserToUserAdapter.make(mongoUser)
+    return Promise.resolve(user)
   }
 }
 
