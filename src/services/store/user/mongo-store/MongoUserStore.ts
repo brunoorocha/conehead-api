@@ -60,7 +60,7 @@ class MongoUserStore implements UserStore {
   public authenticate = async (user: User): Promise<User> => {
     const mongoUser = await this.findByEmail(user.email)
     if (!mongoUser) {
-      const userNotFound = new Error(`Theres no user with email ${user.email}`)
+      const userNotFound = new Error(`There's no user with email ${user.email}`)
       return Promise.reject(userNotFound)
     }
 

@@ -11,4 +11,9 @@ accountRoutes.post('/accounts', [
   check('passwordConfirmation').exists().custom(passwordConfirmationCheck)
 ], AccountController.store)
 
+accountRoutes.post('/accounts/sessions', [
+  check('email').exists().isEmail(),
+  check('password').exists()
+], AccountController.authenticate)
+
 export default accountRoutes
