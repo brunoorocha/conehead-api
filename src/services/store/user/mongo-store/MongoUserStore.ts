@@ -2,8 +2,8 @@ import UserStore from '../UserStore'
 import User from '../../../../models/User'
 import { MongoUser, MongoUserInterface } from './MongoUserSchema'
 import MongoUserToUserAdapter from './MongoUserToUserAdapter'
-import { encryptPassword } from '../../../../workers/crypto/EncryptPassword'
-import { isPasswordValid } from '../../../../workers/crypto/IsPasswordValid'
+import EncryptPassword from '../../../../workers/crypto/EncryptPassword'
+import IsPasswordValid from '../../../../workers/crypto/IsPasswordValid'
 
 class MongoUserStore implements UserStore {
   public async fetchAll (): Promise<User[]> {
@@ -18,7 +18,7 @@ class MongoUserStore implements UserStore {
       return Promise.reject(new Error(`Already exists a user using email ${user.email}`))
     }
 
-    const encryptedPassword = encryptPassword(user.password)
+    const encryptedPassword = EncryptPassword(user.password)
     const mongoUser = await MongoUser.create({
       name: user.name,
       email: user.email,
@@ -60,15 +60,16 @@ class MongoUserStore implements UserStore {
   public authenticate = async (user: User): Promise<User> => {
     const mongoUser = await this.findByEmail(user.email)
     if (!mongoUser) {
-      const userNotFound = new Error(`There's no user with email ${user.email}`)
+      const userNotFound = new Error(`Theres no user with email ${user.email}`)
       return Promise.reject(userNotFound)
     }
 
-    if (!isPasswordValid(user.password, mongoUser.hash, mongoUser.salt)) {
-      const userNotFound = new Error('The password doesn\'t match with the password of user')
-      return Promise.reject(userNotFound)
+    if (!IsPasswordValid(user.password, mongoUser.hash, mongoUser.salt)) {
+      const passwordDoesntMatch = new Error('The password doesn\'t match with the password of user')
+      return Promise.reject(passwordDoesntMatch)
     }
 
+    const authenticatedUser = MongoUserToUserAdapter.make(mongoUser)
     return authenticatedUser
   }
 }

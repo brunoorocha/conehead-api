@@ -1,14 +1,14 @@
 import MongoUserStore from '../services/store/user/mongo-store/MongoUserStore'
-import Store from '../services/store/Store'
-import User from '../models/User'
+import UserStore from '../services/store/user/UserStore'
 import { Request, Response } from 'express'
-import CreateUser from '../workers/user/CreateUser'
 import RequestValidationCheck, { ResponseError } from '../workers/RequestValidationCheck'
+import AuthenticateUser from '../workers/user/AuthenticateUser'
+import CreateUser from '../workers/user/CreateUser'
 
 class AccountController {
-  public userStore: Store<User>
+  public userStore: UserStore
 
-  public constructor (userStore: Store<User> = new MongoUserStore()) {
+  public constructor (userStore: UserStore = new MongoUserStore()) {
     this.userStore = userStore
   }
 
@@ -19,6 +19,22 @@ class AccountController {
       const email: string = req.body.email
       const password: string = req.body.password
       const user = await CreateUser(name, email, password, this.userStore)
+      return res.json(user)
+    } catch (error) {
+      if ((error as ResponseError).status) {
+        return res.status(error.status).json({ errors: error.errors })
+      }
+
+      return res.status(500).json({ error: error.message })
+    }
+  }
+
+  public authenticate = async (req: Request, res: Response): Promise<Response> => {
+    try {
+      await RequestValidationCheck(req)
+      const email = req.body.email
+      const password = req.body.password
+      const user = await AuthenticateUser(email, password, this.userStore)
       return res.json(user)
     } catch (error) {
       if ((error as ResponseError).status) {
