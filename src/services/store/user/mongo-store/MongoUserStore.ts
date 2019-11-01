@@ -1,10 +1,11 @@
-import Store from '../../Store'
+import UserStore from '../UserStore'
 import User from '../../../../models/User'
-import { MongoUser } from './MongoUserSchema'
+import { MongoUser, MongoUserInterface } from './MongoUserSchema'
 import MongoUserToUserAdapter from './MongoUserToUserAdapter'
 import { encryptPassword } from '../../../../workers/crypto/EncryptPassword'
+import { isPasswordValid } from '../../../../workers/crypto/IsPasswordValid'
 
-class MongoUserStore implements Store<User> {
+class MongoUserStore implements UserStore {
   public async fetchAll (): Promise<User[]> {
     const mongoUsers = await MongoUser.find()
     const users = mongoUsers.map(mongoUser => MongoUserToUserAdapter.make(mongoUser))
@@ -50,12 +51,25 @@ class MongoUserStore implements Store<User> {
     return user
   }
 
-  private async findByEmail (email: string): Promise<User> {
+  private async findByEmail (email: string): Promise<MongoUserInterface> {
     const mongoUser = await MongoUser.findOne({ email })
     if (!mongoUser) { return null }
+    return Promise.resolve(mongoUser)
+  }
 
-    const user = MongoUserToUserAdapter.make(mongoUser)
-    return Promise.resolve(user)
+  public authenticate = async (user: User): Promise<User> => {
+    const mongoUser = await this.findByEmail(user.email)
+    if (!mongoUser) {
+      const userNotFound = new Error(`There's no user with email ${user.email}`)
+      return Promise.reject(userNotFound)
+    }
+
+    if (!isPasswordValid(user.password, mongoUser.hash, mongoUser.salt)) {
+      const userNotFound = new Error('The password doesn\'t match with the password of user')
+      return Promise.reject(userNotFound)
+    }
+
+    return authenticatedUser
   }
 }
 
