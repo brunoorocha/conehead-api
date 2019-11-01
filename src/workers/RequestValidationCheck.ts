@@ -7,7 +7,6 @@ export class ResponseError extends Error {
 }
 
 const requestValidationCheck = (req: Request): Promise<ResponseError> => {
-  console.log(req.body)
   const validationErrors = validationResult(req)
   if (!validationErrors.isEmpty()) {
     const responseError = new ResponseError()
