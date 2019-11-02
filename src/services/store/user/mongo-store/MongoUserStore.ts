@@ -2,8 +2,8 @@ import UserStore from '../UserStore'
 import User from '../../../../models/User'
 import { MongoUser, MongoUserInterface } from './MongoUserSchema'
 import MongoUserToUserAdapter from './MongoUserToUserAdapter'
-import EncryptPassword from '../../../../workers/crypto/EncryptPassword'
-import IsPasswordValid from '../../../../workers/crypto/IsPasswordValid'
+import EncryptPassword from '../../../../workers/authentication/EncryptPassword'
+import IsPasswordValid from '../../../../workers/authentication/IsPasswordValid'
 
 class MongoUserStore implements UserStore {
   public async fetchAll (): Promise<User[]> {
