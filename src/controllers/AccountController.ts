@@ -34,8 +34,8 @@ class AccountController {
       await RequestValidationCheck(req)
       const email = req.body.email
       const password = req.body.password
-      const user = await AuthenticateUser(email, password, this.userStore)
-      return res.json(user)
+      const authenticatedUser = await AuthenticateUser(email, password, this.userStore)
+      return res.json(authenticatedUser)
     } catch (error) {
       if ((error as ResponseError).status) {
         return res.status(error.status).json({ errors: error.errors })
