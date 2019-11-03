@@ -4,6 +4,7 @@ import productRoutes from './product/productRoutes'
 import productItemRoutes from './product-item/ProductItemRoutes'
 import measurementRoutes from './measurement/MeasurementRoutes'
 import notificationRoutes from './notifications/NotificationRoutes'
+import authenticationRoutes from './authentication/AuthenticationRoutes'
 import accountRoutes from './account/AccountRoutes'
 
 class AppRouter {
@@ -24,6 +25,7 @@ class AppRouter {
     this.routes.push(productItemRoutes)
     this.routes.push(measurementRoutes)
     this.routes.push(notificationRoutes)
+    this.routes.push(authenticationRoutes)
     this.routes.push(accountRoutes)
   }
 }

@@ -3,7 +3,11 @@ import AuthenticatedUser from '../../models/AuthenticatedUser'
 import User from '../../models/User'
 import GenerateJWTForUser from '../authentication/GenerateJWT'
 
-export const makeAuthenticatedUserFromUser = (user: User): AuthenticatedUser => {
+export const makeAuthenticatedUserFromUser = (user: User, token?: string): AuthenticatedUser => {
+  if (token) {
+    return new AuthenticatedUser(user, token)
+  }
+
   const userToken = GenerateJWTForUser(user)
   const authenticatedUser = new AuthenticatedUser(user, userToken)
   return authenticatedUser

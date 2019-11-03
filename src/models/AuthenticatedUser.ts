@@ -10,7 +10,7 @@ class AuthenticatedUser {
     this.id = user.id
     this.name = user.name
     this.email = user.email
-    this.token = token
+    this.token = token.startsWith('Bearer') ? token.substr(7) : token
   }
 }
 
