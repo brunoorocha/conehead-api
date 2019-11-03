@@ -29,7 +29,7 @@ class MeasurementController {
         return res.status(error.status).json({ errors: error.errors })
       }
 
-      return res.status(500).json({ error })
+      return res.status(500).json({ error: error.message })
     }
   }
 
@@ -51,7 +51,7 @@ class MeasurementController {
         return res.status(error.status).json({ errors: error.errors })
       }
 
-      return res.status(500).json({ error })
+      return res.status(500).json({ error: error.message })
     }
   }
 
@@ -67,7 +67,7 @@ class MeasurementController {
         return res.status(error.status).json({ errors: error.errors })
       }
 
-      return res.status(500).json({ error })
+      return res.status(500).json({ error: error.message })
     }
   }
 }

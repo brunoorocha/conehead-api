@@ -3,6 +3,7 @@ import { Document, Schema, Model, model } from 'mongoose'
 export interface MongoMeasurementInterface extends Document {
   name: string;
   abbreviation: string;
+  owner: string;
 }
 
 const MongoMeasurementSchema = new Schema({

@@ -5,16 +5,16 @@ import MongoMeasurementToMeasurementAdapter from './MongoMeasurementToMeasuremen
 
 class MongoMeasurementStore implements OwnableDataStore<Measurement> {
   public async fetchAll (ownerId: string): Promise<Measurement[]> {
-    const mongoMeasurements = await MongoMeasurement.find({ user: ownerId })
+    const mongoMeasurements = await MongoMeasurement.find({ owner: ownerId })
     const measurements = mongoMeasurements.map(mongoMeasurement => MongoMeasurementToMeasurementAdapter.make(mongoMeasurement))
     return measurements
   }
 
-  public async save (measurement: Measurement, userId: string): Promise<Measurement> {
+  public async save (measurement: Measurement, ownerId: string): Promise<Measurement> {
     const mongoMeasurement = await MongoMeasurement.create({
       name: measurement.name,
       abbreviation: measurement.abbreviation,
-      user: userId
+      owner: ownerId
     })
 
     return MongoMeasurementToMeasurementAdapter.make(mongoMeasurement)
@@ -22,11 +22,21 @@ class MongoMeasurementStore implements OwnableDataStore<Measurement> {
 
   public async get (measurementId: string, ownerId: string): Promise<Measurement> {
     const mongoMeasurement = await MongoMeasurement.findById(measurementId)
+    if (mongoMeasurement.owner !== ownerId) {
+      const permissonError = new Error('You don\'t have permission to access this object')
+      return Promise.reject(permissonError)
+    }
+
     return MongoMeasurementToMeasurementAdapter.make(mongoMeasurement)
   }
 
   public async remove (measurementId: string, ownerId: string): Promise<Measurement> {
     const mongoMeasurement = await MongoMeasurement.findById(measurementId)
+    if (mongoMeasurement.owner !== ownerId) {
+      const permissonError = new Error('You don\'t have permission to access this object')
+      return Promise.reject(permissonError)
+    }
+
     MongoMeasurement.deleteOne({ _id: measurementId }, error => {
       if (error) {
         console.log(error)
