@@ -11,7 +11,7 @@ const JWTMiddlewareStrategy = (userStore: UserStore): JWTStrategy => {
 
   return new JWTStrategy(options, async (jwtPayload, done) => {
     try {
-      const user = await userStore.get(jwtPayload.id)
+      const user = await userStore.get(jwtPayload.sub)
       return done(null, user)
     } catch (error) {
       return done(error, null)

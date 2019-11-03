@@ -9,7 +9,7 @@ const generateJWTForUser = (user: User): string => {
   const apiSecret = Environment.shared.apiSecret
 
   const token = jwt.sign({
-    id: user.id,
+    sub: user.id,
     exp: parseInt(`${expirationDate.getTime() / 1000}`, 10)
   }, apiSecret)
 
