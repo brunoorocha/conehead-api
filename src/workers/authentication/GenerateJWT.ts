@@ -10,7 +10,6 @@ const generateJWTForUser = (user: User): string => {
 
   const token = jwt.sign({
     id: user.id,
-    email: user.email,
     exp: parseInt(`${expirationDate.getTime() / 1000}`, 10)
   }, apiSecret)
 

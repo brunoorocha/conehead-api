@@ -3,6 +3,7 @@ import cors from 'cors'
 import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
 import router from '../routes'
+import passportConfigurate from '../middlewares/passport/config'
 
 class App {
   public express: express.Application
@@ -18,6 +19,7 @@ class App {
     this.express.use(express.json())
     this.express.use(bodyParser.urlencoded({ extended: true }))
     this.express.use(cors())
+    this.express.use(passportConfigurate.initialize())
   }
 
   private routes (): void {
