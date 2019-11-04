@@ -4,8 +4,16 @@ import MongoProductToProductAdapter from './MongoProductToProductAdapter'
 import Product from '../../../../models/Product'
 import { Types } from 'mongoose'
 import { UnauthorizedObjectAccessError, UnableToRemoveObjectError, ObjectNotFoundError } from '../../../../models/errors/DataStoreErrors'
+import Measurement from '../../../../models/Measurement'
+import MongoMeasurementStore from '../../measurement/mongo-store/MongoMeasurementStore'
 
 class MongoProductStore implements OwnableDataStore<Product> {
+  private measurementStore: OwnableDataStore<Measurement>
+
+  public constructor (measurementStore = new MongoMeasurementStore()) {
+    this.measurementStore = measurementStore
+  }
+
   public async fetchAll (ownerId: string): Promise<Product[]> {
     const mongoProducts = await MongoProduct.find({ owner: ownerId })
     const products = mongoProducts.map(async mongoProduct => {
@@ -15,15 +23,22 @@ class MongoProductStore implements OwnableDataStore<Product> {
     return Promise.all(products)
   }
 
-  public async save (product: Product, ownerId: string): Promise<Product> {
-    const mongoProduct = await MongoProduct.create({
-      name: product.name,
-      barcode: product.barcode,
-      measurement: product.measurement.id,
-      owner: ownerId
-    })
+  public save = async (product: Product, ownerId: string): Promise<Product> => {
+    try {
+      const measurement = await this.measurementStore.get(product.measurement.id, ownerId)
+      const mongoProduct = await MongoProduct.create({
+        name: product.name,
+        barcode: product.barcode,
+        measurement: measurement.id,
+        owner: ownerId
+      })
 
-    return MongoProductToProductAdapter.make(mongoProduct)
+      return MongoProductToProductAdapter.make(mongoProduct)
+    } catch (error) {
+      if (error instanceof UnauthorizedObjectAccessError) {
+        return Promise.reject(new ObjectNotFoundError('You cannot create a product using a measure that doesn\'t exist'))
+      }
+    }
   }
 
   public get = async (productId: string, ownerId: string): Promise<Product> => {

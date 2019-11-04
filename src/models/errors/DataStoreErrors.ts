@@ -19,7 +19,8 @@ export class UnableToRemoveObjectError extends DataStoreError {
 }
 
 export class ObjectNotFoundError extends DataStoreError {
-  public constructor () {
-    super('This object could not be found')
+  public constructor (message?: string) {
+    message = message || 'This object could not be found'
+    super(message)
   }
 }
