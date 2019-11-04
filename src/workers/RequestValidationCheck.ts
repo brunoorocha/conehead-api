@@ -1,10 +1,6 @@
 import { Request } from 'express'
 import { validationResult } from 'express-validator'
-
-export class ResponseError extends Error {
-  public status: number
-  public errors: object[]
-}
+import ResponseError from '../models/errors/ResponseError'
 
 const requestValidationCheck = (req: Request): Promise<ResponseError> => {
   const validationErrors = validationResult(req)

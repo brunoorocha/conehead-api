@@ -1,12 +1,13 @@
+import { Request, Response } from 'express'
 import OwnableDataStore from '../services/store/OwnableDataStore'
-import Measurement from '../models/Measurement'
 import MongoMeasurementStore from '../services/store/measurement/mongo-store/MongoMeasurementStore'
 import CreateMeasurement from '../workers/measurement/CreateMeasurement'
 import ListMeasurements from '../workers/measurement/ListMeasurements'
 import GetMeasurementWithId from '../workers/measurement/GetMeasurementWithId'
 import RemoveMeasurementWithId from '../workers/measurement/RemoveMeasurementWithId'
-import RequestValidationCheckWorker, { ResponseError } from '../workers/RequestValidationCheck'
-import { Request, Response } from 'express'
+import RequestValidationCheckWorker from '../workers/RequestValidationCheck'
+import ErrorHandlingWorker from '../workers/error-handler/ErrorHandler'
+import Measurement from '../models/Measurement'
 import User from '../models/User'
 
 class MeasurementController {
@@ -25,18 +26,18 @@ class MeasurementController {
       const measurement = await CreateMeasurement(name, abbreviation, user.id, this.measurementStore)
       return res.json(measurement)
     } catch (error) {
-      if ((error as ResponseError).status) {
-        return res.status(error.status).json({ errors: error.errors })
-      }
-
-      return res.status(500).json({ error: error.message })
+      return ErrorHandlingWorker(res, error)
     }
   }
 
   public index = async (req: Request, res: Response): Promise<Response> => {
-    const user = req.user as User
-    const measurements = await ListMeasurements(user.id, this.measurementStore)
-    return res.json(measurements)
+    try {
+      const user = req.user as User
+      const measurements = await ListMeasurements(user.id, this.measurementStore)
+      return res.json(measurements)
+    } catch (error) {
+      return ErrorHandlingWorker(res, error)
+    }
   }
 
   public get = async (req: Request, res: Response): Promise<Response> => {
@@ -47,11 +48,7 @@ class MeasurementController {
       const measurement = await GetMeasurementWithId(measurementId, user.id, this.measurementStore)
       return res.json(measurement)
     } catch (error) {
-      if ((error as ResponseError).status) {
-        return res.status(error.status).json({ errors: error.errors })
-      }
-
-      return res.status(500).json({ error: error.message })
+      return ErrorHandlingWorker(res, error)
     }
   }
 
@@ -63,11 +60,7 @@ class MeasurementController {
       const removedMeasurement = await RemoveMeasurementWithId(measurementId, user.id, this.measurementStore)
       return res.json(removedMeasurement)
     } catch (error) {
-      if ((error as ResponseError).status) {
-        return res.status(error.status).json({ errors: error.errors })
-      }
-
-      return res.status(500).json({ error: error.message })
+      return ErrorHandlingWorker(res, error)
     }
   }
 }

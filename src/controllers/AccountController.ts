@@ -1,7 +1,8 @@
 import MongoUserStore from '../services/store/user/mongo-store/MongoUserStore'
 import UserStore from '../services/store/user/UserStore'
 import { Request, Response } from 'express'
-import RequestValidationCheck, { ResponseError } from '../workers/RequestValidationCheck'
+import RequestValidationCheck from '../workers/RequestValidationCheck'
+import ResponseError from '../models/errors/ResponseError'
 import CreateUser from '../workers/user/CreateUser'
 
 class AccountController {

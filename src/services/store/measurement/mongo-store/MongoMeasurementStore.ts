@@ -2,6 +2,7 @@ import OwnableDataStore from '../../OwnableDataStore'
 import { MongoMeasurement } from './MongoMeasurementSchema'
 import Measurement from '../../../../models/Measurement'
 import MongoMeasurementToMeasurementAdapter from './MongoMeasurementToMeasurementAdapter'
+import { UnauthorizedObjectAccessError } from '../../../../models/errors/DataStoreErrors'
 
 class MongoMeasurementStore implements OwnableDataStore<Measurement> {
   public async fetchAll (ownerId: string): Promise<Measurement[]> {
@@ -23,8 +24,7 @@ class MongoMeasurementStore implements OwnableDataStore<Measurement> {
   public async get (measurementId: string, ownerId: string): Promise<Measurement> {
     const mongoMeasurement = await MongoMeasurement.findById(measurementId)
     if (mongoMeasurement.owner !== ownerId) {
-      const permissonError = new Error('You don\'t have permission to access this object')
-      return Promise.reject(permissonError)
+      return Promise.reject(new UnauthorizedObjectAccessError())
     }
 
     return MongoMeasurementToMeasurementAdapter.make(mongoMeasurement)
@@ -33,8 +33,7 @@ class MongoMeasurementStore implements OwnableDataStore<Measurement> {
   public async remove (measurementId: string, ownerId: string): Promise<Measurement> {
     const mongoMeasurement = await MongoMeasurement.findById(measurementId)
     if (mongoMeasurement.owner !== ownerId) {
-      const permissonError = new Error('You don\'t have permission to access this object')
-      return Promise.reject(permissonError)
+      return Promise.reject(new UnauthorizedObjectAccessError())
     }
 
     MongoMeasurement.deleteOne({ _id: measurementId }, error => {
