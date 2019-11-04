@@ -5,7 +5,8 @@ import CreateProductItemWorker from '../workers/product-item/CreateProductItem'
 import ListProductItemsOfProductWorker from '../workers/product-item/ListProductItemsOfProduct'
 import GetProductItemWithIdWorker from '../workers/product-item/GetProductItemWithId'
 import RequestValidationCheckWorker from '../workers/RequestValidationCheck'
-import ResponseError from '../models/errors/ResponseError'
+import ErrorHandlingWorker from '../workers/error-handler/ErrorHandler'
+import User from '../models/User'
 
 class ProductItemController {
   public productItemStore: ProductItemStore
@@ -17,49 +18,40 @@ class ProductItemController {
   public store = async (req: Request, res: Response): Promise<Response> => {
     try {
       await RequestValidationCheckWorker(req)
+      const user = req.user as User
       const productId: string = req.params.productId
       const quantity: number = req.body.quantity
       const price: number = req.body.price
       const expiration: string = req.body.expiration
 
-      const product = await CreateProductItemWorker(quantity, price, expiration, productId, this.productItemStore)
+      const product = await CreateProductItemWorker(quantity, price, expiration, productId, user.id, this.productItemStore)
       return res.json(product)
     } catch (error) {
-      if ((error as ResponseError).status) {
-        return res.status(error.status).json({ errors: error.errors })
-      }
-
-      return res.status(500).json({ error })
+      return ErrorHandlingWorker(res, error)
     }
   }
 
   public index = async (req: Request, res: Response): Promise<Response> => {
     try {
       await RequestValidationCheckWorker(req)
+      const user = req.user as User
       const productId: string = req.params.productId
-      const productItems = await ListProductItemsOfProductWorker(productId, this.productItemStore)
+      const productItems = await ListProductItemsOfProductWorker(productId, user.id, this.productItemStore)
       return res.json(productItems)
     } catch (error) {
-      if ((error as ResponseError).status) {
-        return res.status(error.status).json({ errors: error.errors })
-      }
-
-      return res.status(500).json({ error })
+      return ErrorHandlingWorker(res, error)
     }
   }
 
   public get = async (req: Request, res: Response): Promise<Response> => {
     try {
       await RequestValidationCheckWorker(req)
+      const user = req.user as User
       const productItemId: string = req.params.productItemId
-      const productItem = await GetProductItemWithIdWorker(productItemId, this.productItemStore)
+      const productItem = await GetProductItemWithIdWorker(productItemId, user.id, this.productItemStore)
       return res.json(productItem)
     } catch (error) {
-      if ((error as ResponseError).status) {
-        return res.status(error.status).json({ errors: error.errors })
-      }
-
-      return res.status(500).json({ error })
+      return ErrorHandlingWorker(res, error)
     }
   }
 }
