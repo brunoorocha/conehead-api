@@ -11,8 +11,8 @@ export default class ResponseError extends Error {
   }
 }
 
-export class ResponseErrorFactory {
-  public static responseErrorFromDataStoreError (dataStoreError: DataStoreError): ResponseError {
+export class ResponseErrorAdapter {
+  public static makeFromDataStoreError (dataStoreError: DataStoreError): ResponseError {
     const responseError = new ResponseError()
 
     if (dataStoreError as UnauthorizedObjectAccessError) {

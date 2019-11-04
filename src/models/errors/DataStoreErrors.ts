@@ -4,5 +4,8 @@ export abstract class DataStoreError extends Error {
 }
 
 export class UnauthorizedObjectAccessError extends DataStoreError {
-  message = 'You don\'t have permission to access this object'
+  public constructor () {
+    super()
+    this.message = 'You don\'t have permission to access this object'
+  }
 }

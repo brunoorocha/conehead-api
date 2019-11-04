@@ -1,4 +1,4 @@
-import ResponseError, { ResponseErrorFactory } from '../../models/errors/ResponseError'
+import ResponseError, { ResponseErrorAdapter } from '../../models/errors/ResponseError'
 import { DataStoreError } from '../../models/errors/DataStoreErrors'
 import { Response } from 'express'
 
@@ -10,7 +10,7 @@ const errorHandler = (res: Response, error: Error): Response => {
   }
 
   if (error instanceof DataStoreError) {
-    responseError = ResponseErrorFactory.responseErrorFromDataStoreError((error as DataStoreError))
+    responseError = ResponseErrorAdapter.makeFromDataStoreError((error as DataStoreError))
   }
 
   return res.status(responseError.status).json({ errors: responseError.errors })
