@@ -1,4 +1,4 @@
-import Store from '../../services/store/Store'
+import OwnableDataStore from '../../services/store/OwnableDataStore'
 import Product from '../../models/Product'
 import Measurement from '../../models/Measurement'
 
@@ -8,10 +8,10 @@ import Measurement from '../../models/Measurement'
  * @param productStore An implementation of ProductStore interface used to store the created product.
  * @returns A Promise with the stored product.
  */
-const createProductWorker = async (name: string, measurementId: string, barcode: string = undefined, productStore: Store<Product>): Promise<Product> => {
+const createProductWorker = async (name: string, measurementId: string, barcode: string = undefined, userId: string, productStore: OwnableDataStore<Product>): Promise<Product> => {
   const measurement = new Measurement(measurementId, null, null)
   const product = new Product(null, name, measurement, barcode)
-  const storedProduct = await productStore.save(product)
+  const storedProduct = await productStore.save(product, userId)
   return storedProduct
 }
 

@@ -1,21 +1,22 @@
+import { Request, Response } from 'express'
 import MongoProductStore from '../services/store/product/mongo-store/MongoProductStore'
-import Store from '../services/store/Store'
+import OwnableDataStore from '../services/store/OwnableDataStore'
 import CreateProductWorker from '../workers/product/CreateProduct'
 import ListProductsWorker from '../workers/product/ListProducts'
 import GetProductWithId from '../workers/product/GetProductWithId'
 import RemoveProductWithId from '../workers/product/RemoveProductWithId'
-import { Request, Response } from 'express'
-import Product from '../models/Product'
 import RequestValidationCheckWorker from '../workers/RequestValidationCheck'
 import ResponseError from '../models/errors/ResponseError'
+import Product from '../models/Product'
+import User from '../models/User'
 
 class ProductController {
-  public productStore: Store<Product>
+  public productStore: OwnableDataStore<Product>
 
   /**
    * @param productStore Dependency injection of an implementation of ProductStore interface. It can be ommited because is used an MongoProductStore object for default.
    */
-  public constructor (productStore: Store<Product> = new MongoProductStore()) {
+  public constructor (productStore: OwnableDataStore<Product> = new MongoProductStore()) {
     this.productStore = productStore
   }
 
@@ -29,10 +30,11 @@ class ProductController {
   public store = async (req: Request, res: Response): Promise<Response> => {
     try {
       await RequestValidationCheckWorker(req)
+      const user = req.user as User
       const name: string = req.body.name
       const barcode: string = req.body.barcode
       const measurementId: string = req.body.measurementId
-      const product = await CreateProductWorker(name, measurementId, barcode, this.productStore)
+      const product = await CreateProductWorker(name, measurementId, barcode, user.id, this.productStore)
       return res.json(product)
     } catch (error) {
       if ((error as ResponseError).status) {
@@ -50,7 +52,8 @@ class ProductController {
    * @returns Returns the list of products in json format through Reques.json() method.
    */
   public index = async (req: Request, res: Response): Promise<Response> => {
-    const products = await ListProductsWorker(this.productStore)
+    const user = req.user as User
+    const products = await ListProductsWorker(user.id, this.productStore)
     return res.json(products)
   }
 
@@ -63,8 +66,9 @@ class ProductController {
   public get = async (req: Request, res: Response): Promise<Response> => {
     try {
       await RequestValidationCheckWorker(req)
+      const user = req.user as User
       const productId: string = req.params.productId
-      const product = await GetProductWithId(productId, this.productStore)
+      const product = await GetProductWithId(productId, user.id, this.productStore)
       return res.json(product)
     } catch (error) {
       if ((error as ResponseError).status) {
@@ -84,8 +88,9 @@ class ProductController {
   public remove = async (req: Request, res: Response): Promise<Response> => {
     try {
       await RequestValidationCheckWorker(req)
+      const user = req.user as User
       const productId: string = req.params.productId
-      const removedProduct = await RemoveProductWithId(productId, this.productStore)
+      const removedProduct = await RemoveProductWithId(productId, user.id, this.productStore)
       return res.json(removedProduct)
     } catch (error) {
       if ((error as ResponseError).status) {

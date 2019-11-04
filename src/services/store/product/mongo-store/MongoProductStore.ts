@@ -1,10 +1,10 @@
-import Store from '../../Store'
+import OwnableDataStore from '../../OwnableDataStore'
 import { MongoProduct } from './MongoProductSchema'
 import MongoProductToProductAdapter from './MongoProductToProductAdapter'
 import Product from '../../../../models/Product'
 
-class MongoProductStore implements Store<Product> {
-  public async fetchAll (): Promise<Product[]> {
+class MongoProductStore implements OwnableDataStore<Product> {
+  public async fetchAll (ownerId: string): Promise<Product[]> {
     const mongoProducts = await MongoProduct.find()
     const products = mongoProducts.map(async mongoProduct => {
       return MongoProductToProductAdapter.make(mongoProduct)
@@ -13,7 +13,7 @@ class MongoProductStore implements Store<Product> {
     return Promise.all(products)
   }
 
-  public async save (product: Product): Promise<Product> {
+  public async save (product: Product, ownerId: string): Promise<Product> {
     const mongoProduct = await MongoProduct.create({
       name: product.name,
       barcode: product.barcode,
@@ -23,12 +23,12 @@ class MongoProductStore implements Store<Product> {
     return MongoProductToProductAdapter.make(mongoProduct)
   }
 
-  public async get (productId: string): Promise<Product> {
+  public async get (productId: string, ownerId: string): Promise<Product> {
     const mongoProduct = await MongoProduct.findById(productId)
     return MongoProductToProductAdapter.make(mongoProduct)
   }
 
-  public async remove (productId: string): Promise<Product> {
+  public async remove (productId: string, ownerId: string): Promise<Product> {
     const mongoProduct = await MongoProduct.findById(productId)
 
     MongoProduct.deleteOne({ _id: productId }, (error) => {
