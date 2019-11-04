@@ -2,7 +2,8 @@ import OwnableDataStore from '../../OwnableDataStore'
 import { MongoMeasurement } from './MongoMeasurementSchema'
 import Measurement from '../../../../models/Measurement'
 import MongoMeasurementToMeasurementAdapter from './MongoMeasurementToMeasurementAdapter'
-import { UnauthorizedObjectAccessError } from '../../../../models/errors/DataStoreErrors'
+import { Types } from 'mongoose'
+import { UnauthorizedObjectAccessError, UnableToRemoveObjectError, ObjectNotFoundError } from '../../../../models/errors/DataStoreErrors'
 
 class MongoMeasurementStore implements OwnableDataStore<Measurement> {
   public async fetchAll (ownerId: string): Promise<Measurement[]> {
@@ -21,26 +22,33 @@ class MongoMeasurementStore implements OwnableDataStore<Measurement> {
     return MongoMeasurementToMeasurementAdapter.make(mongoMeasurement)
   }
 
-  public async get (measurementId: string, ownerId: string): Promise<Measurement> {
-    const mongoMeasurement = await MongoMeasurement.findById(measurementId)
-    if (mongoMeasurement.owner !== ownerId) {
-      return Promise.reject(new UnauthorizedObjectAccessError())
-    }
-
-    return MongoMeasurementToMeasurementAdapter.make(mongoMeasurement)
+  public get = async (measurementId: string, ownerId: string): Promise<Measurement> => {
+    const measurement = await this.findMeasurementForOwner(measurementId, ownerId)
+    return measurement
   }
 
-  public async remove (measurementId: string, ownerId: string): Promise<Measurement> {
-    const mongoMeasurement = await MongoMeasurement.findById(measurementId)
-    if (mongoMeasurement.owner !== ownerId) {
-      return Promise.reject(new UnauthorizedObjectAccessError())
-    }
-
-    MongoMeasurement.deleteOne({ _id: measurementId }, error => {
+  public remove = async (measurementId: string, ownerId: string): Promise<Measurement> => {
+    const measurement = await this.findMeasurementForOwner(measurementId, ownerId)
+    MongoMeasurement.deleteOne({ _id: measurement.id }, error => {
       if (error) {
-        console.log(error)
+        return Promise.reject(new UnableToRemoveObjectError(error))
       }
     })
+
+    return measurement
+  }
+
+  private async findMeasurementForOwner (measurementId: string, ownerId: string): Promise<Measurement> {
+    const mongoMeasurement = await MongoMeasurement.findById(measurementId)
+
+    if (!mongoMeasurement) {
+      return Promise.reject(new ObjectNotFoundError())
+    }
+
+    const mongoMeasurementOwnerId = Types.ObjectId(mongoMeasurement.owner)
+    if (!mongoMeasurementOwnerId.equals(ownerId)) {
+      return Promise.reject(new UnauthorizedObjectAccessError())
+    }
 
     return MongoMeasurementToMeasurementAdapter.make(mongoMeasurement)
   }

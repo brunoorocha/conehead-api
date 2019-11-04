@@ -6,7 +6,7 @@ import ListProductsWorker from '../workers/product/ListProducts'
 import GetProductWithId from '../workers/product/GetProductWithId'
 import RemoveProductWithId from '../workers/product/RemoveProductWithId'
 import RequestValidationCheckWorker from '../workers/RequestValidationCheck'
-import ResponseError from '../models/errors/ResponseError'
+import ErrorHandlingWorker from '../workers/error-handler/ErrorHandler'
 import Product from '../models/Product'
 import User from '../models/User'
 
@@ -37,11 +37,7 @@ class ProductController {
       const product = await CreateProductWorker(name, measurementId, barcode, user.id, this.productStore)
       return res.json(product)
     } catch (error) {
-      if ((error as ResponseError).status) {
-        return res.status(error.status).json({ errors: error.errors })
-      }
-
-      return res.status(500).json({ error })
+      return ErrorHandlingWorker(res, error)
     }
   }
 
@@ -52,9 +48,13 @@ class ProductController {
    * @returns Returns the list of products in json format through Reques.json() method.
    */
   public index = async (req: Request, res: Response): Promise<Response> => {
-    const user = req.user as User
-    const products = await ListProductsWorker(user.id, this.productStore)
-    return res.json(products)
+    try {
+      const user = req.user as User
+      const products = await ListProductsWorker(user.id, this.productStore)
+      return res.json(products)
+    } catch (error) {
+      return ErrorHandlingWorker(res, error)
+    }
   }
 
   /**
@@ -71,11 +71,7 @@ class ProductController {
       const product = await GetProductWithId(productId, user.id, this.productStore)
       return res.json(product)
     } catch (error) {
-      if ((error as ResponseError).status) {
-        return res.status(error.status).json({ errors: error.errors })
-      }
-
-      return res.status(500).json({ error })
+      return ErrorHandlingWorker(res, error)
     }
   }
 
@@ -93,11 +89,7 @@ class ProductController {
       const removedProduct = await RemoveProductWithId(productId, user.id, this.productStore)
       return res.json(removedProduct)
     } catch (error) {
-      if ((error as ResponseError).status) {
-        return res.status(error.status).json({ errors: error.errors })
-      }
-
-      return res.status(500).json({ error })
+      return ErrorHandlingWorker(res, error)
     }
   }
 }

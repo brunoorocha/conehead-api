@@ -2,10 +2,12 @@ import OwnableDataStore from '../../OwnableDataStore'
 import { MongoProduct } from './MongoProductSchema'
 import MongoProductToProductAdapter from './MongoProductToProductAdapter'
 import Product from '../../../../models/Product'
+import { Types } from 'mongoose'
+import { UnauthorizedObjectAccessError, UnableToRemoveObjectError, ObjectNotFoundError } from '../../../../models/errors/DataStoreErrors'
 
 class MongoProductStore implements OwnableDataStore<Product> {
   public async fetchAll (ownerId: string): Promise<Product[]> {
-    const mongoProducts = await MongoProduct.find()
+    const mongoProducts = await MongoProduct.find({ owner: ownerId })
     const products = mongoProducts.map(async mongoProduct => {
       return MongoProductToProductAdapter.make(mongoProduct)
     })
@@ -17,25 +19,41 @@ class MongoProductStore implements OwnableDataStore<Product> {
     const mongoProduct = await MongoProduct.create({
       name: product.name,
       barcode: product.barcode,
-      measurement: product.measurement.id
+      measurement: product.measurement.id,
+      owner: ownerId
     })
 
     return MongoProductToProductAdapter.make(mongoProduct)
   }
 
-  public async get (productId: string, ownerId: string): Promise<Product> {
-    const mongoProduct = await MongoProduct.findById(productId)
-    return MongoProductToProductAdapter.make(mongoProduct)
+  public get = async (productId: string, ownerId: string): Promise<Product> => {
+    const product = await this.findProductForOwner(productId, ownerId)
+    return product
   }
 
-  public async remove (productId: string, ownerId: string): Promise<Product> {
-    const mongoProduct = await MongoProduct.findById(productId)
-
-    MongoProduct.deleteOne({ _id: productId }, (error) => {
+  public remove = async (productId: string, ownerId: string): Promise<Product> => {
+    const product = await this.findProductForOwner(productId, ownerId)
+    MongoProduct.deleteOne({ _id: product.id }, (error) => {
       if (error) {
-        console.log(error)
+        return Promise.reject(new UnableToRemoveObjectError(error))
       }
     })
+
+    return product
+  }
+
+  private async findProductForOwner (productId: string, ownerId: string): Promise<Product> {
+    const mongoProduct = await MongoProduct.findById(productId)
+
+    if (!mongoProduct) {
+      return Promise.reject(new ObjectNotFoundError())
+    }
+
+    const mongoProductOwnerId = Types.ObjectId(mongoProduct.owner)
+    if (!mongoProductOwnerId.equals(ownerId)) {
+      return Promise.reject(new UnauthorizedObjectAccessError())
+    }
+
     return MongoProductToProductAdapter.make(mongoProduct)
   }
 }

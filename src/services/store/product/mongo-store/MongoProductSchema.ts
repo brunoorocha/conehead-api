@@ -5,6 +5,7 @@ export interface MongoProductInterface extends Document {
   name: string;
   barcode?: string;
   measurement: string | MongoMeasurementInterface;
+  owner: string;
 }
 
 const MongoProductSchema = new Schema({
@@ -19,6 +20,10 @@ const MongoProductSchema = new Schema({
   measurement: {
     type: Schema.Types.ObjectId,
     ref: 'Measurement'
+  },
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
   }
 }, {
   timestamps: true
