@@ -23,7 +23,11 @@ export class ResponseErrorAdapter {
 
     if (dataStoreError instanceof ObjectNotFoundError) {
       responseError.status = 404
-      responseError.errors = [{ message: dataStoreError.message }]
+      responseError.errors = [{
+        message: dataStoreError.message,
+        object: dataStoreError.objectName,
+        objectId: dataStoreError.objectId
+      }]
       return responseError
     }
 

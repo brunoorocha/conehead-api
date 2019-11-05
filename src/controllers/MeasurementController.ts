@@ -24,7 +24,7 @@ class MeasurementController {
       const name: string = req.body.name
       const abbreviation: string = req.body.abbreviation
       const measurement = await CreateMeasurement(name, abbreviation, user.id, this.measurementStore)
-      return res.json(measurement)
+      return res.status(201).json(measurement)
     } catch (error) {
       return ErrorHandlingWorker(res, error)
     }

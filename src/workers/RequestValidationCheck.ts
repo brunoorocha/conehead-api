@@ -7,7 +7,7 @@ const requestValidationCheck = (req: Request): Promise<ResponseError> => {
   const validationErrors = validationResult(req)
   if (!validationErrors.isEmpty()) {
     const errors = validationErrors.array().map(validationError => FieldValidationErrorAdapter.makeFromValidationError(validationError))
-    const responseError = new ResponseError(422, errors)
+    const responseError = new ResponseError(400, errors)
     return Promise.reject(responseError)
   }
 

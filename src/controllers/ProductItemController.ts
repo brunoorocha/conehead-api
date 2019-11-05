@@ -25,7 +25,7 @@ class ProductItemController {
       const expiration: string = req.body.expiration
 
       const product = await CreateProductItemWorker(quantity, price, expiration, productId, user.id, this.productItemStore)
-      return res.json(product)
+      return res.status(201).json(product)
     } catch (error) {
       return ErrorHandlingWorker(res, error)
     }

@@ -28,8 +28,12 @@ export class UnableToCreateObjectError extends DataStoreError {
 }
 
 export class ObjectNotFoundError extends DataStoreError {
-  public constructor (message?: string) {
-    message = message || 'This object could not be found'
-    super(message)
+  public objectName: string
+  public objectId: string
+
+  public constructor (objectName: string, objectId: string) {
+    super(`The ${objectName} with id ${objectId} could not be found`)
+    this.objectName = objectName
+    this.objectId = objectId
   }
 }

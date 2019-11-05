@@ -29,7 +29,7 @@ class MongoProductItemStore implements ProductItemStore {
       return Promise.all(productItems)
     } catch (error) {
       if (error instanceof UnauthorizedObjectAccessError || error instanceof ObjectNotFoundError) {
-        return Promise.reject(new ObjectNotFoundError('There\'s no product with an id that match with productId'))
+        return Promise.reject(new ObjectNotFoundError('Product', productId))
       }
     }
   }
@@ -48,7 +48,7 @@ class MongoProductItemStore implements ProductItemStore {
       return MongoProductItemToProductItemAdapter.make(mongoProductItem)
     } catch (error) {
       if (error instanceof UnauthorizedObjectAccessError || error instanceof ObjectNotFoundError) {
-        return Promise.reject(new ObjectNotFoundError('There\'s no product with an id that match with productId'))
+        return Promise.reject(new ObjectNotFoundError('Product', productItem.product.id))
       }
 
       return Promise.reject(new UnableToCreateObjectError(error.message))
@@ -77,7 +77,7 @@ class MongoProductItemStore implements ProductItemStore {
     const mongoProductItem = await MongoProductItem.findById(productItemId)
 
     if (!mongoProductItem) {
-      return Promise.reject(new ObjectNotFoundError())
+      return Promise.reject(new ObjectNotFoundError('Product Item', productItemId))
     }
 
     const mongoProductItemOwnerId = Types.ObjectId(mongoProductItem.owner)

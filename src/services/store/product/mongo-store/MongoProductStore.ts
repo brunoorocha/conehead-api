@@ -36,7 +36,7 @@ class MongoProductStore implements OwnableDataStore<Product> {
       return MongoProductToProductAdapter.make(mongoProduct)
     } catch (error) {
       if (error instanceof UnauthorizedObjectAccessError) {
-        return Promise.reject(new ObjectNotFoundError('You cannot create a product using a measure that doesn\'t exist'))
+        return Promise.reject(new ObjectNotFoundError('Measure', product.measurement.id))
       }
 
       return Promise.reject(new UnableToCreateObjectError(error.message))
@@ -63,7 +63,7 @@ class MongoProductStore implements OwnableDataStore<Product> {
     const mongoProduct = await MongoProduct.findById(productId)
 
     if (!mongoProduct) {
-      return Promise.reject(new ObjectNotFoundError())
+      return Promise.reject(new ObjectNotFoundError('Product', productId))
     }
 
     const mongoProductOwnerId = Types.ObjectId(mongoProduct.owner)

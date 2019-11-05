@@ -2,7 +2,7 @@ import MongoUserStore from '../services/store/user/mongo-store/MongoUserStore'
 import UserStore from '../services/store/user/UserStore'
 import { Request, Response } from 'express'
 import RequestValidationCheck from '../workers/RequestValidationCheck'
-import ResponseError from '../models/errors/ResponseError'
+import ErrorHandler from '../workers/error-handler/ErrorHandler'
 import CreateUser from '../workers/user/CreateUser'
 
 class AccountController {
@@ -19,13 +19,9 @@ class AccountController {
       const email: string = req.body.email
       const password: string = req.body.password
       const user = await CreateUser(name, email, password, this.userStore)
-      return res.json(user)
+      return res.status(201).json(user)
     } catch (error) {
-      if ((error as ResponseError).status) {
-        return res.status(error.status).json({ errors: error.errors })
-      }
-
-      return res.status(500).json({ error: error.message })
+      return ErrorHandler(res, error)
     }
   }
 }

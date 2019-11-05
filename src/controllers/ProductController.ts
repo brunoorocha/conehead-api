@@ -35,7 +35,7 @@ class ProductController {
       const barcode: string = req.body.barcode
       const measurementId: string = req.body.measurementId
       const product = await CreateProductWorker(name, measurementId, barcode, user.id, this.productStore)
-      return res.json(product)
+      return res.status(201).json(product)
     } catch (error) {
       return ErrorHandlingWorker(res, error)
     }
