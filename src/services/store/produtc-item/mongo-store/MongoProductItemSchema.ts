@@ -7,6 +7,7 @@ export interface MongoProductItemInterface extends Document {
   expiration: Date;
   createdAt: Date;
   product: string | MongoProductInterface;
+  owner: string;
 }
 
 const MongoProductSchema = new Schema({
@@ -25,6 +26,10 @@ const MongoProductSchema = new Schema({
   product: {
     type: Schema.Types.ObjectId,
     ref: 'Product'
+  },
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
   }
 }, {
   timestamps: true

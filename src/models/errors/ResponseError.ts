@@ -1,4 +1,4 @@
-import { DataStoreError, UnauthorizedObjectAccessError, ObjectNotFoundError, UnableToRemoveObjectError } from './DataStoreErrors'
+import { DataStoreError, UnauthorizedObjectAccessError, ObjectNotFoundError, UnableToRemoveObjectError, UnableToCreateObjectError } from './DataStoreErrors'
 
 export default class ResponseError extends Error {
   public status: number
@@ -29,7 +29,13 @@ export class ResponseErrorAdapter {
 
     if (dataStoreError instanceof UnableToRemoveObjectError) {
       responseError.status = 500
-      responseError.errors = [{ message: dataStoreError.message }]
+      responseError.errors = [{ message: dataStoreError.message, reason: dataStoreError.reason }]
+      return responseError
+    }
+
+    if (dataStoreError instanceof UnableToCreateObjectError) {
+      responseError.status = 500
+      responseError.errors = [{ message: dataStoreError.message, reason: dataStoreError.reason }]
       return responseError
     }
   }

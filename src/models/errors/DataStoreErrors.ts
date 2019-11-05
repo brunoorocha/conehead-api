@@ -18,6 +18,15 @@ export class UnableToRemoveObjectError extends DataStoreError {
   }
 }
 
+export class UnableToCreateObjectError extends DataStoreError {
+  public reason?: string
+
+  public constructor (reason?: string) {
+    super('This object could not be created')
+    this.reason = reason
+  }
+}
+
 export class ObjectNotFoundError extends DataStoreError {
   public constructor (message?: string) {
     message = message || 'This object could not be found'

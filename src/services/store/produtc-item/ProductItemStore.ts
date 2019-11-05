@@ -1,6 +1,6 @@
 import ProductItem from '../../../models/ProductItem'
-import Store from '../Store'
+import OwnableDataStore from '../OwnableDataStore'
 
-export default interface ProductItemStore extends Store<ProductItem> {
-  fetchAllOfProduct (productId: string): Promise<ProductItem[]>;
+export default interface ProductItemStore extends OwnableDataStore<ProductItem> {
+  fetchAllOfProduct (productId: string, ownerId: string): Promise<ProductItem[]>;
 }

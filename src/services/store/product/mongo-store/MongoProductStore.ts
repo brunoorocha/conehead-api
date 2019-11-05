@@ -3,7 +3,7 @@ import { MongoProduct } from './MongoProductSchema'
 import MongoProductToProductAdapter from './MongoProductToProductAdapter'
 import Product from '../../../../models/Product'
 import { Types } from 'mongoose'
-import { UnauthorizedObjectAccessError, UnableToRemoveObjectError, ObjectNotFoundError } from '../../../../models/errors/DataStoreErrors'
+import { UnauthorizedObjectAccessError, UnableToRemoveObjectError, ObjectNotFoundError, UnableToCreateObjectError } from '../../../../models/errors/DataStoreErrors'
 import Measurement from '../../../../models/Measurement'
 import MongoMeasurementStore from '../../measurement/mongo-store/MongoMeasurementStore'
 
@@ -38,6 +38,8 @@ class MongoProductStore implements OwnableDataStore<Product> {
       if (error instanceof UnauthorizedObjectAccessError) {
         return Promise.reject(new ObjectNotFoundError('You cannot create a product using a measure that doesn\'t exist'))
       }
+
+      return Promise.reject(new UnableToCreateObjectError(error.message))
     }
   }
 
