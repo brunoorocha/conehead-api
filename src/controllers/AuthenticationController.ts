@@ -2,7 +2,7 @@ import MongoUserStore from '../services/store/user/mongo-store/MongoUserStore'
 import UserStore from '../services/store/user/UserStore'
 import { Request, Response } from 'express'
 import RequestValidationCheck from '../workers/RequestValidationCheck'
-import ResponseError from '../models/errors/ResponseError'
+import ErrorHandler from '../workers/error-handler/ErrorHandler'
 import AuthenticateUser from '../workers/user/AuthenticateUser'
 import User from '../models/User'
 import AuthenticatedUser from '../models/AuthenticatedUser'
@@ -35,11 +35,7 @@ class AuthenticationController {
       const authenticatedUser = await AuthenticateUser(email, password, this.userStore)
       return res.json(authenticatedUser)
     } catch (error) {
-      if ((error as ResponseError).status) {
-        return res.status(error.status).json({ errors: error.errors })
-      }
-
-      return res.status(500).json({ error: error.message })
+      return ErrorHandler(res, error)
     }
   }
 }

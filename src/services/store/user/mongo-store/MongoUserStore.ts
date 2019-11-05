@@ -4,6 +4,7 @@ import { MongoUser, MongoUserInterface } from './MongoUserSchema'
 import MongoUserToUserAdapter from './MongoUserToUserAdapter'
 import EncryptPassword from '../../../../workers/authentication/EncryptPassword'
 import IsPasswordValid from '../../../../workers/authentication/IsPasswordValid'
+import { ObjectNotFoundError, ObjectWithThisPropertyAlreadyExists, UnableToRemoveObjectError, NotFoundUserWithEmailError, PasswordDoesntMatchForUserWithEmailError } from '../../../../models/errors/DataStoreErrors'
 
 class MongoUserStore implements UserStore {
   public async fetchAll (): Promise<User[]> {
@@ -15,7 +16,7 @@ class MongoUserStore implements UserStore {
   public save = async (user: User): Promise<User> => {
     const userWithEmailAlreadyExists = await this.findByEmail(user.email)
     if (userWithEmailAlreadyExists) {
-      return Promise.reject(new Error(`Already exists a user using email ${user.email}`))
+      return Promise.reject(new ObjectWithThisPropertyAlreadyExists('User', 'email', user.email))
     }
 
     const encryptedPassword = EncryptPassword(user.password)
@@ -33,7 +34,7 @@ class MongoUserStore implements UserStore {
   public get = async (userId: string): Promise<User> => {
     const mongoUser = await MongoUser.findById(userId)
     if (!mongoUser) {
-      return Promise.reject(new Error(`There's no user with id ${userId}`))
+      return Promise.reject(new ObjectNotFoundError('User', userId))
     }
 
     const user = MongoUserToUserAdapter.make(mongoUser)
@@ -44,7 +45,7 @@ class MongoUserStore implements UserStore {
     const user = await this.get(userId)
     MongoUser.deleteOne({ _id: user.id }, error => {
       if (error) {
-        return Promise.reject(error)
+        return Promise.reject(new UnableToRemoveObjectError(error))
       }
     })
 
@@ -60,13 +61,11 @@ class MongoUserStore implements UserStore {
   public authenticate = async (user: User): Promise<User> => {
     const mongoUser = await this.findByEmail(user.email)
     if (!mongoUser) {
-      const userNotFound = new Error(`There's no user with email ${user.email}`)
-      return Promise.reject(userNotFound)
+      return Promise.reject(new NotFoundUserWithEmailError(user.email))
     }
 
     if (!IsPasswordValid(user.password, mongoUser.hash, mongoUser.salt)) {
-      const passwordDoesntMatch = new Error('The password doesn\'t match with the password of user')
-      return Promise.reject(passwordDoesntMatch)
+      return Promise.reject(new PasswordDoesntMatchForUserWithEmailError(user.email))
     }
 
     const authenticatedUser = MongoUserToUserAdapter.make(mongoUser)

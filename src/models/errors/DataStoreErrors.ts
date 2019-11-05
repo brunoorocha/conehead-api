@@ -37,3 +37,31 @@ export class ObjectNotFoundError extends DataStoreError {
     this.objectId = objectId
   }
 }
+
+export class NotFoundUserWithEmailError extends DataStoreError {
+  public email: string
+
+  public constructor (email: string) {
+    super(`There's no user with email ${email}`)
+    this.email = email
+  }
+}
+
+export class PasswordDoesntMatchForUserWithEmailError extends DataStoreError {
+  public constructor (email: string) {
+    super(`The password doesn't match for user with email ${email}`)
+  }
+}
+
+export class ObjectWithThisPropertyAlreadyExists extends DataStoreError {
+  public objectName: string
+  public propertyName: string
+  public propertyValue: string | number
+
+  public constructor (objectName: string, propertyName: string, propertyValue: string | number) {
+    super(`Already exists a ${objectName} with ${propertyName} ${propertyValue}`)
+    this.objectName = objectName
+    this.propertyName = propertyName
+    this.propertyValue = propertyValue
+  }
+}
