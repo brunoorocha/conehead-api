@@ -28,8 +28,12 @@ class MongoProductItemStore implements ProductItemStore {
       const productItems = mongoProductItems.map(mongoProductItem => MongoProductItemToProductItemAdapter.make(mongoProductItem))
       return Promise.all(productItems)
     } catch (error) {
-      if (error instanceof UnauthorizedObjectAccessError || error instanceof ObjectNotFoundError) {
+      if (error instanceof UnauthorizedObjectAccessError) {
         return Promise.reject(new ObjectNotFoundError('Product', productId))
+      }
+
+      if (error instanceof ObjectNotFoundError) {
+        return Promise.reject(error)
       }
     }
   }
@@ -47,8 +51,12 @@ class MongoProductItemStore implements ProductItemStore {
 
       return MongoProductItemToProductItemAdapter.make(mongoProductItem)
     } catch (error) {
-      if (error instanceof UnauthorizedObjectAccessError || error instanceof ObjectNotFoundError) {
+      if (error instanceof UnauthorizedObjectAccessError) {
         return Promise.reject(new ObjectNotFoundError('Product', productItem.product.id))
+      }
+
+      if (error instanceof ObjectNotFoundError) {
+        return Promise.reject(error)
       }
 
       return Promise.reject(new UnableToCreateObjectError(error.message))

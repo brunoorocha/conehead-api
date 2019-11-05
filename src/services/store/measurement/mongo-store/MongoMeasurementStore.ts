@@ -42,7 +42,7 @@ class MongoMeasurementStore implements OwnableDataStore<Measurement> {
     const mongoMeasurement = await MongoMeasurement.findById(measurementId)
 
     if (!mongoMeasurement) {
-      return Promise.reject(new ObjectNotFoundError())
+      return Promise.reject(new ObjectNotFoundError('Measure', measurementId))
     }
 
     const mongoMeasurementOwnerId = Types.ObjectId(mongoMeasurement.owner)

@@ -39,6 +39,10 @@ class MongoProductStore implements OwnableDataStore<Product> {
         return Promise.reject(new ObjectNotFoundError('Measure', product.measurement.id))
       }
 
+      if (error instanceof ObjectNotFoundError) {
+        return Promise.reject(error)
+      }
+
       return Promise.reject(new UnableToCreateObjectError(error.message))
     }
   }
