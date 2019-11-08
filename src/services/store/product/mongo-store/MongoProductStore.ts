@@ -1,4 +1,5 @@
 import OwnableDataStore from '../../OwnableDataStore'
+import Store from '../../Store'
 import { MongoProduct } from './MongoProductSchema'
 import MongoProductToProductAdapter from './MongoProductToProductAdapter'
 import Product from '../../../../models/Product'
@@ -8,7 +9,7 @@ import Measurement from '../../../../models/Measurement'
 import MongoMeasurementStore from '../../measurement/mongo-store/MongoMeasurementStore'
 
 class MongoProductStore implements OwnableDataStore<Product> {
-  private measurementStore: OwnableDataStore<Measurement>
+  private measurementStore: Store<Measurement>
 
   public constructor (measurementStore = new MongoMeasurementStore()) {
     this.measurementStore = measurementStore
@@ -25,7 +26,7 @@ class MongoProductStore implements OwnableDataStore<Product> {
 
   public save = async (product: Product, ownerId: string): Promise<Product> => {
     try {
-      const measurement = await this.measurementStore.get(product.measurement.id, ownerId)
+      const measurement = await this.measurementStore.get(product.measurement.id)
       const mongoProduct = await MongoProduct.create({
         name: product.name,
         barcode: product.barcode,
@@ -35,10 +36,6 @@ class MongoProductStore implements OwnableDataStore<Product> {
 
       return MongoProductToProductAdapter.make(mongoProduct)
     } catch (error) {
-      if (error instanceof UnauthorizedObjectAccessError) {
-        return Promise.reject(new ObjectNotFoundError('Measure', product.measurement.id))
-      }
-
       if (error instanceof ObjectNotFoundError) {
         return Promise.reject(error)
       }
