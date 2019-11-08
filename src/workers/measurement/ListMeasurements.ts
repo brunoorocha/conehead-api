@@ -1,8 +1,8 @@
-import OwnableDataStore from '../../services/store/OwnableDataStore'
+import Store from '../../services/store/Store'
 import Measurement from '../../models/Measurement'
 
-const listMeasurements = async (userId: string, measurementStore: OwnableDataStore<Measurement>): Promise<Measurement[]> => {
-  const measurements = await measurementStore.fetchAll(userId)
+const listMeasurements = async (measurementStore: Store<Measurement>): Promise<Measurement[]> => {
+  const measurements = await measurementStore.fetchAll()
   return measurements
 }
 
