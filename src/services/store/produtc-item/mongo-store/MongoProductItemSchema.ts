@@ -4,7 +4,7 @@ import { MongoProductInterface } from '../../product/mongo-store/MongoProductSch
 export interface MongoProductItemInterface extends Document {
   quantity: number;
   price: number;
-  expiration: Date;
+  expiration?: Date;
   createdAt: Date;
   product: string | MongoProductInterface;
   owner: string;
@@ -21,7 +21,7 @@ const MongoProductSchema = new Schema({
   },
   expiration: {
     type: Date,
-    required: true
+    required: false
   },
   product: {
     type: Schema.Types.ObjectId,

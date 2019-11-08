@@ -10,7 +10,6 @@ productItemRoutes.get('/products/:productId/items/:productItemId', [check('produ
 productItemRoutes.post('/products/:productId/items', [
   check('quantity').exists().isNumeric(),
   check('price').exists().isNumeric(),
-  check('expiration').exists(),
   check('productId').isMongoId()
 ], ProductItemController.store)
 
