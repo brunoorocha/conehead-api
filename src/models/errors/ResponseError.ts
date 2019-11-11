@@ -17,7 +17,10 @@ export class ResponseErrorAdapter {
 
     if (dataStoreError instanceof UnauthorizedObjectAccessError) {
       responseError.status = 401
-      responseError.errors = [{ message: dataStoreError.message }]
+      responseError.errors = [{
+        message: dataStoreError.message,
+        errorCode: dataStoreError.errorCode
+      }]
       return responseError
     }
 
@@ -26,38 +29,59 @@ export class ResponseErrorAdapter {
       responseError.errors = [{
         message: dataStoreError.message,
         object: dataStoreError.objectName,
-        objectId: dataStoreError.objectId
+        objectId: dataStoreError.objectId,
+        errorCode: dataStoreError.errorCode
       }]
       return responseError
     }
 
     if (dataStoreError instanceof UnableToRemoveObjectError) {
       responseError.status = 500
-      responseError.errors = [{ message: dataStoreError.message, reason: dataStoreError.reason }]
+      responseError.errors = [{
+        message: dataStoreError.message,
+        reason: dataStoreError.reason,
+        errorCode: dataStoreError.errorCode
+      }]
       return responseError
     }
 
     if (dataStoreError instanceof UnableToCreateObjectError) {
       responseError.status = 500
-      responseError.errors = [{ message: dataStoreError.message, reason: dataStoreError.reason }]
+      responseError.errors = [{
+        message: dataStoreError.message,
+        reason: dataStoreError.reason,
+        errorCode: dataStoreError.errorCode
+      }]
       return responseError
     }
 
     if (dataStoreError instanceof ObjectWithThisPropertyAlreadyExists) {
       responseError.status = 400
-      responseError.errors = [{ message: dataStoreError.message, field: dataStoreError.propertyName }]
+      responseError.errors = [{
+        message: dataStoreError.message,
+        field: dataStoreError.propertyName,
+        errorCode: dataStoreError.errorCode
+      }]
       return responseError
     }
 
     if (dataStoreError instanceof NotFoundUserWithEmailError) {
       responseError.status = 404
-      responseError.errors = [{ message: dataStoreError.message, field: 'email' }]
+      responseError.errors = [{
+        message: dataStoreError.message,
+        field: 'email',
+        errorCode: dataStoreError.errorCode
+      }]
       return responseError
     }
 
     if (dataStoreError instanceof PasswordDoesntMatchForUserWithEmailError) {
       responseError.status = 400
-      responseError.errors = [{ message: dataStoreError.message, field: 'password' }]
+      responseError.errors = [{
+        message: dataStoreError.message,
+        field: 'password',
+        errorCode: dataStoreError.errorCode
+      }]
       return responseError
     }
   }
