@@ -53,6 +53,16 @@ export class NotFoundUserWithEmailError extends DataStoreError {
   }
 }
 
+export class AlreadyExistsAnUserWithEmailError extends DataStoreError {
+  public email: string
+
+  public constructor (email: string) {
+    super(`Already exists an user with email ${email}`)
+    this.email = email
+    this.errorCode = 'alreadyExistsAnUserWithEmail'
+  }
+}
+
 export class PasswordDoesntMatchForUserWithEmailError extends DataStoreError {
   public constructor (email: string) {
     super(`The password doesn't match for user with email ${email}`)

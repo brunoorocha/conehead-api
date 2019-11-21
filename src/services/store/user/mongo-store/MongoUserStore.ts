@@ -4,7 +4,7 @@ import { MongoUser, MongoUserInterface } from './MongoUserSchema'
 import MongoUserToUserAdapter from './MongoUserToUserAdapter'
 import EncryptPassword from '../../../../workers/authentication/EncryptPassword'
 import IsPasswordValid from '../../../../workers/authentication/IsPasswordValid'
-import { ObjectNotFoundError, ObjectWithThisPropertyAlreadyExists, UnableToRemoveObjectError, NotFoundUserWithEmailError, PasswordDoesntMatchForUserWithEmailError } from '../../../../models/errors/DataStoreErrors'
+import { ObjectNotFoundError, UnableToRemoveObjectError, NotFoundUserWithEmailError, PasswordDoesntMatchForUserWithEmailError, AlreadyExistsAnUserWithEmailError } from '../../../../models/errors/DataStoreErrors'
 
 class MongoUserStore implements UserStore {
   public async fetchAll (): Promise<User[]> {
@@ -16,7 +16,7 @@ class MongoUserStore implements UserStore {
   public save = async (user: User): Promise<User> => {
     const userWithEmailAlreadyExists = await this.findByEmail(user.email)
     if (userWithEmailAlreadyExists) {
-      return Promise.reject(new ObjectWithThisPropertyAlreadyExists('User', 'email', user.email))
+      return Promise.reject(new AlreadyExistsAnUserWithEmailError(user.email))
     }
 
     const encryptedPassword = EncryptPassword(user.password)

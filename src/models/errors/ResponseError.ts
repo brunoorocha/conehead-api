@@ -1,4 +1,4 @@
-import { DataStoreError, UnauthorizedObjectAccessError, ObjectNotFoundError, UnableToRemoveObjectError, UnableToCreateObjectError, ObjectWithThisPropertyAlreadyExists, NotFoundUserWithEmailError, PasswordDoesntMatchForUserWithEmailError } from './DataStoreErrors'
+import { DataStoreError, UnauthorizedObjectAccessError, ObjectNotFoundError, UnableToRemoveObjectError, UnableToCreateObjectError, ObjectWithThisPropertyAlreadyExists, NotFoundUserWithEmailError, PasswordDoesntMatchForUserWithEmailError, AlreadyExistsAnUserWithEmailError } from './DataStoreErrors'
 
 export default class ResponseError extends Error {
   public status: number
@@ -67,6 +67,16 @@ export class ResponseErrorAdapter {
 
     if (dataStoreError instanceof NotFoundUserWithEmailError) {
       responseError.status = 404
+      responseError.errors = [{
+        message: dataStoreError.message,
+        field: 'email',
+        errorCode: dataStoreError.errorCode
+      }]
+      return responseError
+    }
+
+    if (dataStoreError instanceof AlreadyExistsAnUserWithEmailError) {
+      responseError.status = 400
       responseError.errors = [{
         message: dataStoreError.message,
         field: 'email',
