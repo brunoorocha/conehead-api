@@ -1,22 +1,22 @@
 import { Request, Response } from 'express'
 import MongoProductStore from '../services/store/product/mongo-store/MongoProductStore'
-import OwnableDataStore from '../services/store/OwnableDataStore'
 import CreateProductWorker from '../workers/product/CreateProduct'
 import ListProductsWorker from '../workers/product/ListProducts'
 import GetProductWithId from '../workers/product/GetProductWithId'
+import GetProductWithBarcode from '../workers/product/GetProductWithBarcode'
 import RemoveProductWithId from '../workers/product/RemoveProductWithId'
 import RequestValidationCheckWorker from '../workers/RequestValidationCheck'
 import ErrorHandlingWorker from '../workers/error-handler/ErrorHandler'
-import Product from '../models/Product'
 import User from '../models/User'
+import ProductStore from '../services/store/product/ProductStore'
 
 class ProductController {
-  public productStore: OwnableDataStore<Product>
+  public productStore: ProductStore
 
   /**
    * @param productStore Dependency injection of an implementation of ProductStore interface. It can be ommited because is used an MongoProductStore object for default.
    */
-  public constructor (productStore: OwnableDataStore<Product> = new MongoProductStore()) {
+  public constructor (productStore: ProductStore = new MongoProductStore()) {
     this.productStore = productStore
   }
 
@@ -50,6 +50,13 @@ class ProductController {
   public index = async (req: Request, res: Response): Promise<Response> => {
     try {
       const user = req.user as User
+
+      const barcode: string = req.query.barcode
+      if (barcode) {
+        const product = await GetProductWithBarcode(barcode, user.id, this.productStore)
+        return res.json(product)
+      }
+
       const products = await ListProductsWorker(user.id, this.productStore)
       return res.json(products)
     } catch (error) {

@@ -1,4 +1,4 @@
-import { DataStoreError, UnauthorizedObjectAccessError, ObjectNotFoundError, UnableToRemoveObjectError, UnableToCreateObjectError, ObjectWithThisPropertyAlreadyExists, NotFoundUserWithEmailError, PasswordDoesntMatchForUserWithEmailError, AlreadyExistsAnUserWithEmailError } from './DataStoreErrors'
+import { DataStoreError, UnauthorizedObjectAccessError, ObjectNotFoundError, UnableToRemoveObjectError, UnableToCreateObjectError, ObjectWithThisPropertyAlreadyExists, NotFoundUserWithEmailError, PasswordDoesntMatchForUserWithEmailError, AlreadyExistsAnUserWithEmailError, NotFoundProductWithBarcode } from './DataStoreErrors'
 
 export default class ResponseError extends Error {
   public status: number
@@ -90,6 +90,16 @@ export class ResponseErrorAdapter {
       responseError.errors = [{
         message: dataStoreError.message,
         field: 'password',
+        errorCode: dataStoreError.errorCode
+      }]
+      return responseError
+    }
+
+    if (dataStoreError instanceof NotFoundProductWithBarcode) {
+      responseError.status = 404
+      responseError.errors = [{
+        message: dataStoreError.message,
+        field: 'barcode',
         errorCode: dataStoreError.errorCode
       }]
       return responseError

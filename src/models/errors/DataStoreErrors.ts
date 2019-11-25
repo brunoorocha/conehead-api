@@ -43,6 +43,16 @@ export class ObjectNotFoundError extends DataStoreError {
   }
 }
 
+export class NotFoundProductWithBarcode extends DataStoreError {
+  public barcode: string
+
+  public constructor (barcode: string) {
+    super(`There's no product with barcode ${barcode}`)
+    this.barcode = barcode
+    this.errorCode = 'notFoundProductWithBarcode'
+  }
+}
+
 export class NotFoundUserWithEmailError extends DataStoreError {
   public email: string
 
